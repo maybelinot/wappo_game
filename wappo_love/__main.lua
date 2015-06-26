@@ -10,19 +10,28 @@ function level_load(number)
     level.map = tiled_level['data']
     level.floor = {}
     level.units = {}
+    level.player = nil
+    level.enemies = {}
+    level.player = nil
     for i=0,level.size.x-1 do
         for j=1,level.size.y do
             local cell = level.map[i*level.size.x + j]
             print(i, j, cell .. " ")
-            if cell == 1 or cell == 2 or cell == 3 or cell == 4 or cell == 5 then
-                level.units[i*level.size.x + j] = get_object[cell]()
-                level.floor[i*level.size.x + j] = nil
+            -- if cell == 1 then
+            --     local object = get_object[cell]()
+            --     object.x = i
+            --     object.y = j
+            --     level.player = object
+            if cell == 1 or  cell == 2 or cell == 3 or cell == 4 or cell == 5 then
+                local object = get_object[cell]()
+                object.x = i
+                object.y = j
+                table.insert(level.units, object)
             elseif cell == 6 or cell == 7 or cell == 13 or cell == 14 or cell == 15 or cell == 16 then
-                level.units[i*level.size.x + j] = nil
-                level.floor[i*level.size.x + j] = get_object[cell]()
-            else
-                level.units[i*level.size.x + j] = nil
-                level.floor[i*level.size.x + j] = nil
+                local object = get_object[cell]()
+                object.x = i
+                object.y = j
+                table.insert(level.floor, object)
             end
         end
     end
@@ -39,21 +48,11 @@ local num = 0
 
 function level_draw(level)
     local stime = love.timer.getTime()
-    for i=0,level.size.x-1 do
-        for j=1,level.size.y do
-            local cell = level.floor[i*level.size.x + j]
-            if cell ~= nil then
-                cell.sprite:draw(j*20-20, i*26+5)
-            end
-        end
+    for i=1,#level.floor do
+        level.floor[i].sprite:draw(level.floor[i].y*20-20, level.floor[i].x*26+5)
     end
-    for i=0,level.size.x-1 do
-        for j=1,level.size.y do
-            local cell = level.units[i*level.size.x + j]
-            if cell ~= nil then
-                cell.sprite:draw(j*20-20, i*26+5)
-            end
-        end
+    for i=1,#level.units do
+        level.units[i].sprite:draw(level.units[i].y*20-20, level.units[i].x*26+5)
     end
     local etime = love.timer.getTime()
     sum = sum + etime - stime
@@ -79,7 +78,10 @@ function level_update(level, dt)
 end
 
 function level_move(level, way)
-
+    -- if way=="down" then
+    
+    --     level.player.x - 1
+    -- end
 end
 
 local level = level_load(32)
