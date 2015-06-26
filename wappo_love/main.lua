@@ -31,6 +31,9 @@ enemy_red.animations.left = load_animation('ystrip.png', '1-4', 3, 0.3)
 enemy_red.animations.right = load_animation('ystrip.png', '1-4', 4, 0.3)
 enemy_red.animation = enemy_red.animations.down
 
+
+local level = level_load(32)
+
 function love.load()
 
     
@@ -87,7 +90,6 @@ function love.load()
     -- y_pos=0
     -- deltax = 40
     -- deltay = 52
-    level = load_level(32)
 
 end
 
@@ -127,18 +129,19 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key=='up' or key=='w' then
-        y_pos = y_pos - deltay
+    if key=='w' then
+        key = 'up'
     end
-    if key=='down' or key=='s' then
-        y_pos = y_pos + deltay
+    if key=='s' then
+        key = 'down'
     end
-    if key=='left' or key=='a' then
-        x_pos = x_pos - deltax
+    if key=='a' then
+        key = 'left'
     end
-    if key=='right' or key=='d' then
-        x_pos = x_pos + deltax
+    if key=='d' then
+        key = 'right'
     end
+    level_move(level, key)
 end
 
 function love.mousepressed(x, y, button)
@@ -162,8 +165,35 @@ function love.mousepressed(x, y, button)
 end
 
 
-function load_level(number)
-    level = require("maps/level"..number)
-    return level['layers'][1]['data']
+function level_load(number)
+    local tiled_level = require("maps/level"..number)['layers'][1]
+    local level = {}
+    level.size = {}
+    level.size.x = tiled_level['width']
+    level.size.y = tiled_level['height']
+    level.map = tiled_level['data']
+    for i=1,level.size.x do
+        for j=1,level.size.y do
+            local cell = level.map[i*level.size.x + j]
+            if cell == 1 then
+                level.player = {i, j}
+            end
+        end
+    end
+    -- level.player = {1, 2}
+    level.red = {{1, 2}, {2, 3}}
+    level.violet = {{1, 2}, {2, 3}}
+    level.blue = {{1, 2}, {2, 3}}
+    print(level.player)
+    return level
 end
+
+function level_move(level, way)
+
+end
+
+
+
+
+
 
