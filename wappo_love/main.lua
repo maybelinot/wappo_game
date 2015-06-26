@@ -92,29 +92,28 @@ function love.mousepressed(x, y, button)
 end
 
 function love.draw()
-    love.graphics.draw(bcg, 0, 0)
+    love.graphics.draw(bcg, deltax, deltay)
 
     for i=1,#map-1 do
         for j=1,#map-1 do
-            if map[j+1][i+1]==1 then
-                love.graphics.draw(player_imgset, units_quad, (i-1)*deltax/2, (j-1)*deltay/2)
-            elseif map[j+1][i+1]==2 then
-                love.graphics.draw(blue_enemy_imgset, units_quad, (i-1)*deltax/2, (j-1)*deltay/2)
-            elseif map[j+1][i+1]==3 then
-                love.graphics.draw(red_enemy_imgset, units_quad, (i-1)*deltax/2, (j-1)*deltay/2)
-            elseif map[j+1][i+1]==4 then
-                -- love.graphics.draw(player_imgset, units_quad, (i-1)*deltax, j*(d-1)eltay)
-            elseif map[j+1][i+1]==5 then
-                love.graphics.print(table.concat({tostring(i),'    ',tostring(j)}),400+i*3,400+j*3)
-                love.graphics.draw(teleport_imgset, obj_quad, (i-1)*deltax/2, (j-1)*deltay/2)
-            elseif map[j+1][i+1]==6 then
-                love.graphics.draw(exit_img, (i-1)*deltax/2, (j-1)*deltay/2)
-            elseif map[j+1][i+1]==7 then
-                love.graphics.draw(flame_imgset, obj_quad, (i-1)*deltax/2, (j-1)*deltay/2)
-            elseif map[j+1][i+1]==8 then
-                love.graphics.draw(hor_wall_img, (i-1)*deltax/2, (j-1)*deltay/2+deltay/2)
-            elseif map[j+1][i+1]==9 then
-                love.graphics.draw(ver_wall_img, (i-1)*deltax/2+deltax/2, (j-1)*deltay/2)
+            if map[j][i]==1 then
+                love.graphics.draw(player_imgset, units_quad, i*deltax/2, j*deltay/2)
+            elseif map[j][i]==2 then
+                love.graphics.draw(blue_enemy_imgset, units_quad, i*deltax/2, j*deltay/2)
+            elseif map[j][i]==3 then
+                love.graphics.draw(red_enemy_imgset, units_quad, i*deltax/2, j*deltay/2)
+            elseif map[j][i]==4 then
+                -- love.graphics.draw(player_imgset, units_quad, i*deltax, j*(d-1)eltay)
+            elseif map[j][i]==5 then
+                love.graphics.draw(teleport_imgset, obj_quad, i*deltax/2, j*deltay/2)
+            elseif map[j][i]==6 then
+                love.graphics.draw(exit_img, i*deltax/2, j*deltay/2)
+            elseif map[j][i]==7 then
+                love.graphics.draw(flame_imgset, obj_quad, i*deltax/2, j*deltay/2)
+            elseif map[j][i]==8 then
+                love.graphics.draw(hor_wall_img, i*deltax/2, (j*deltay+deltay/2)
+            elseif map[j][i]==9 then
+                love.graphics.draw(ver_wall_img, (i*deltax+deltax-6)/2, (j*deltay+hor_wall_img:getHeight())/2)
             end
         end
     end
