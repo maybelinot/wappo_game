@@ -1,131 +1,102 @@
-require 'animations'
-local anim8 = require 'libs/anim8'
-local tilesize = {40, 52}
+require 'units'
 
-local image, g
 
-function load_animation(image, spritesx, spritesy, delay)
-    local animation = {}
-    animation.image = love.graphics.newImage('sprites/'..image)
-    local g = anim8.newGrid(
-        tilesize[1], 
-        tilesize[2], 
-        animation.image:getWidth(), 
-        animation.image:getHeight())
-    animation.animation = anim8.newAnimation(g(spritesx, spritesy), delay)
-    animation.update = function(self, dt)
-        self.animation:update(dt)
+function level_load(number)
+    local tiled_level = require("maps/level"..number)['layers'][1]
+    local level = {}
+    level.size = {}
+    level.size.x = tiled_level['width']
+    level.size.y = tiled_level['height']
+    level.map = tiled_level['data']
+    level.floor_obj = {}
+    level.floor_map = {}
+    level.units_obj = {}
+    level.units_map = {}
+    level.player = nil
+    for i=0,level.size.x-1 do
+        for j=1,level.size.y do
+            local cell = level.map[i*level.size.x + j]
+            if cell == 1 or cell == 2 or cell == 3 or cell == 4 or cell == 5 then
+                level.units_map[i*level.size.x + j] = get_object[cell]()
+                level.floor_map[i*level.size.x + j] = nil
+                local object = get_object[cell]()
+                object.x = i
+                object.y = j
+                if cell == 1 then
+                    level.player = object
+                else
+                    table.insert(level.units_obj, object)
+                end
+            elseif cell == 6 or cell == 7 or cell == 13 or cell == 14 or cell == 15 or cell == 16 then
+                level.units_map[i*level.size.x + j] = nil
+                level.floor_map[i*level.size.x + j] = get_object[cell]()
+                local object = get_object[cell]()
+                object.x = i
+                object.y = j
+                table.insert(level.floor_obj, object)
+            else
+                level.units_map[i*level.size.x + j] = nil
+                level.floor_map[i*level.size.x + j] = nil
+            end
+        end
     end
-    animation.draw = function(self, x, y)
-        self.animation:draw(self.image, x, y)
-    end 
-    return animation
+    -- level.player = {1, 2}
+    -- level.red = {{1, 2}, {2, 3}}
+    -- level.violet = {{1, 2}, {2, 3}}
+    -- level.blue = {{1, 2}, {2, 3}}
+    -- print(level.player)
+    return level
 end
 
-local enemy_red = {}
-enemy_red.animations = {}
-enemy_red.animations.kill = load_animation('ykill.png', '1-3', 1, 0.1)
-enemy_red.animations.up = load_animation('ystrip.png', '1-4', 1, 0.3)
-enemy_red.animations.down = load_animation('ystrip.png', '1-4', 2, 0.3)
-enemy_red.animations.left = load_animation('ystrip.png', '1-4', 3, 0.3)
-enemy_red.animations.right = load_animation('ystrip.png', '1-4', 4, 0.3)
-enemy_red.animation = enemy_red.animations.down
+local sum = 0
+local num = 0
 
+function level_draw(level)
+    for i=1,#level.floor_obj do
+        level.floor_obj[i].sprite:draw(level.floor_obj[i].y*20-20, level.floor_obj[i].x*26+5)
+    end
+    for i=1,#level.units_obj do
+        level.units_obj[i].sprite:draw(level.units_obj[i].y*20-20, level.units_obj[i].x*26+5)
+    end
+    level.player.sprite:draw(level.player.y*20-20, level.player.x*26+5)
+end
+
+function level_update(level, dt)
+    for i=1,#level.floor_obj do
+        level.floor_obj[i].sprite:update(dt)
+    end
+    for i=1,#level.units_obj do
+        level.units_obj[i].sprite:update(dt)
+    end
+    level.player.sprite:update(dt)
+end
+
+function level_move(level, way)
+
+end
 
 local level = level_load(32)
 
 function love.load()
-
-    
-
     -- width, height = love.window.getDesktopDimensions( display )
-    image = love.graphics.newImage('sprites/wicon.png')
-    bcg = love.graphics.newImage('sprites/bggame.png')
-    -- -1 - borders
-    -- 0 - empty
-    -- 1 - player
-    -- 2 - blue enemy
-    -- 3 - red enemy
-    -- 4 - violet enemy
-    -- 5 - teleport
-    -- 6 - exit
-    -- 7 - flame
-    -- 8 - grey obstacle horizontal
-    -- 9 - grey obstacle vertical
-    -- level 32
-    -- map = { 
-    --         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-    --         {-1,  0,  0,  0,  0,  0,  0,  0,  0,  6,  0,  0, -1},
-    --         {-1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1},
-    --         {-1,  0,  0,  0,  0,  0,  0,  0,  9,  0,  0,  0, -1},
-    --         {-1,  8,  0,  0,  0,  0,  0,  0,  0,  8,  0,  0, -1},
-    --         {-1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1},
-    --         {-1,  0,  0,  0,  0,  8,  0,  0,  0,  8,  0,  0, -1},
-    --         {-1,  5,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
-    --         {-1,  8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  8, -1},
-    --         {-1,  0,  0,  7,  0,  0,  0,  0,  9,  0,  0,  3, -1},
-    --         {-1,  0,  0,  0,  0,  0,  0,  8,  0,  0,  0,  8, -1},
-    --         {-1,  0,  0,  0,  0,  5,  0,  0,  0,  0,  0,  0, -1},
-    --         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
-    --       }
-    -- player_imgset = love.graphics.newImage("Sprites/wstrip.png")
-    -- red_enemy_imgset = love.graphics.newImage("Sprites/ystrip.png")
-    -- blue_enemy_imgset = love.graphics.newImage("Sprites/xstrip.png")
-    -- teleport_imgset = love.graphics.newImage("Sprites/tele.png")
-    -- flame_imgset = love.graphics.newImage("Sprites/flame.png")
-    -- hor_wall_img = love.graphics.newImage("Sprites/hwall.png")
-    -- ver_wall_img = love.graphics.newImage("Sprites/vwall.png")
-    -- exit_img = love.graphics.newImage("Sprites/exit.png")
- 
-    -- the Mesh DrawMode "fan" works well for 4-vertex Meshes.
-    -- units_quad = love.graphics.newQuad(0, 0, player_imgset:getWidth()/4, player_imgset:getHeight()/4, player_imgset:getDimensions())
-    -- obj_quad = love.graphics.newQuad(0, 0, teleport_imgset:getWidth()/4, teleport_imgset:getHeight(), teleport_imgset:getDimensions())
-    -- love.graphics.setBackgroundColor(104, 136, 248)
-    -- love.window.setMode(650, 650)
+    -- image = love.graphics.newImage('sprites/wicon.png')
+    background = love.graphics.newImage('sprites/bggame.png')
 
     song1 = love.audio.newSource("audio/wappo2.ogg", "static")
     -- song1:setVolume(0.3)
     -- song1:play()
-    -- x_pos=0
-    -- y_pos=0
+
     -- deltax = 40
     -- deltay = 52
-
 end
 
 function love.update(dt)
-    flame.animation:update(dt)
+    level_update(level, dt)
 end
 
 function love.draw()
-    flame.animation:draw(100, 100)
-
-    -- love.graphics.draw(bcg, deltax, deltay)
-
-    -- for i=1,#map-1 do
-    --     for j=1,#map-1 do
-    --         if map[j][i]==1 then
-    --             love.graphics.draw(player_imgset, units_quad, i*deltax/2, j*deltay/2)
-    --         elseif map[j][i]==2 then
-    --             love.graphics.draw(blue_enemy_imgset, units_quad, i*deltax/2, j*deltay/2)
-    --         elseif map[j][i]==3 then
-    --             love.graphics.draw(red_enemy_imgset, units_quad, i*deltax/2, j*deltay/2)
-    --         elseif map[j][i]==4 then
-    --             -- love.graphics.draw(player_imgset, units_quad, i*deltax, j*(d-1)eltay)
-    --         elseif map[j][i]==5 then
-    --             love.graphics.draw(teleport_imgset, obj_quad, i*deltax/2, j*deltay/2)
-    --         elseif map[j][i]==6 then
-    --             love.graphics.draw(exit_img, i*deltax/2, j*deltay/2)
-    --         elseif map[j][i]==7 then
-    --             love.graphics.draw(flame_imgset, obj_quad, i*deltax/2, j*deltay/2)
-    --         elseif map[j][i]==8 then
-    --             love.graphics.draw(hor_wall_img, i*deltax/2, j*deltay+deltay/2)
-    --         elseif map[j][i]==9 then
-    --             love.graphics.draw(ver_wall_img, (i*deltax+deltax-6)/2, (j*deltay+hor_wall_img:getHeight())/2)
-    --         end
-    --     end
-    -- end
-    -- love.graphics.draw(player_imgset, units_quad, x_pos, y_pos)
+    love.graphics.draw(background, 0, 0)
+    level_draw(level)
 end
 
 function love.keypressed(key)
@@ -164,33 +135,6 @@ function love.mousepressed(x, y, button)
    --  end
 end
 
-
-function level_load(number)
-    local tiled_level = require("maps/level"..number)['layers'][1]
-    local level = {}
-    level.size = {}
-    level.size.x = tiled_level['width']
-    level.size.y = tiled_level['height']
-    level.map = tiled_level['data']
-    for i=1,level.size.x do
-        for j=1,level.size.y do
-            local cell = level.map[i*level.size.x + j]
-            if cell == 1 then
-                level.player = {i, j}
-            end
-        end
-    end
-    -- level.player = {1, 2}
-    level.red = {{1, 2}, {2, 3}}
-    level.violet = {{1, 2}, {2, 3}}
-    level.blue = {{1, 2}, {2, 3}}
-    print(level.player)
-    return level
-end
-
-function level_move(level, way)
-
-end
 
 
 
