@@ -24,7 +24,11 @@ end
 local enemy_red = {}
 enemy_red.animations = {}
 enemy_red.animations.kill = load_animation('ykill.png', '1-3', 1, 0.1)
-enemy_red.animation = enemy_red.animations.kill
+enemy_red.animations.up = load_animation('ystrip.png', '1-4', 1, 0.3)
+enemy_red.animations.down = load_animation('ystrip.png', '1-4', 2, 0.3)
+enemy_red.animations.left = load_animation('ystrip.png', '1-4', 3, 0.3)
+enemy_red.animations.right = load_animation('ystrip.png', '1-4', 4, 0.3)
+enemy_red.animation = enemy_red.animations.down
 
 function love.load()
 
