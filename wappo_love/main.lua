@@ -92,11 +92,11 @@ function love.load()
 end
 
 function love.update(dt)
-    enemy_violet.animation:update(dt)
+    flame.animation:update(dt)
 end
 
 function love.draw()
-    enemy_violet.animation:draw(100, 100)
+    flame.animation:draw(100, 100)
 
     -- love.graphics.draw(bcg, deltax, deltay)
 

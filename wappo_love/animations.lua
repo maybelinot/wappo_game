@@ -57,3 +57,9 @@ player.animations.up = load_animation('wstrip.png', 2, '1-4', 0.3)
 player.animations.left = load_animation('wstrip.png', 3, '1-4', 0.3)
 player.animations.right = load_animation('wstrip.png', 4, '1-4', 0.3)
 player.animation = player.animations.down
+
+flame = {}
+flame.animation = load_animation('flame.png', '1-4', 1, 0.1)
+
+teleport = {}
+teleport.animation = load_animation('tele.png', '1-4', 1, 0.1)
