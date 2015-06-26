@@ -72,7 +72,72 @@ function level_update(level, dt)
 end
 
 function level_move(level, way)
+    local cell = level.floor_map[(level.player.x+way[1])*level.size.x + (level.player.y+way[2])]
+    if cell ~= nil then
+        print("cant move, obstacle")
+    else
+        local cell = level.units_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)]
+        if cell == nil then
+            local cell = level.floor_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)]
+            if cell == nil then
+                level.units_map[level.player.x*level.size.x + level.player.y] = nil
+                level.units_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)] = get_object[1]()
+                level.player.x = level.player.x + way[1]*2
+                level.player.y = level.player.y + way[2]*2
+                print("move ok")
+            elseif cell.index == 6 then
+                level.player.x = level.player.x + way[1]*2
+                level.player.y = level.player.y + way[2]*2
+                print("WIN")
+            elseif cell.index == 7 then
+                level.units_map[level.player.x*level.size.x + level.player.y] = nil
+                level.units_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)] = get_object[1]()
+                level.player.x = level.player.x + way[1]*2
+                level.player.y = level.player.y + way[2]*2
+                print("animation to portal")
+                for i=1,#level.floor_obj do
+                    if level.floor_obj[i].index==7 and (level.floor_obj[i].x ~= level.player.x or level.floor_obj[i].y ~= level.player.y) then
+                        print('ok')
+                        level.units_map[level.player.x*level.size.x + level.player.y] = nil
+                        level.units_map[level.floor_obj[i].x*level.size.x + level.floor_obj[i].y] = get_object[1]()
+                        level.player.x = level.floor_obj[i].x
+                        level.player.y = level.floor_obj[i].y
+                        break
+                    end
+                end
+            end
+        elseif cell.index == 5 then
+            local cell = level.floor_map[(level.player.x+way[1]*3)*level.size.x + (level.player.y+way[2]*3)]
+            if cell ~= nil and cell.index >=13 and cell.index <= 16 then
+                print("cant move flame to obstacle")
+            else
+                local pos = (level.player.x+way[1]*4)*level.size.x + (level.player.y+way[2]*4)
+                if level.units_map[pos] == nil and level.floor_map[pos] == nil then
+                    for i=1,#level.units_obj do
+                        if level.units_obj[i].index == 5 and level.units_obj[i].x == level.player.x+way[1]*2 and level.units_obj[i].y == level.player.y+way[2]*2 then
+                            table.remove(level.units_obj, i)
+                            break
+                        end
+                    end
 
+                    local object = get_object[5]()
+                    object.x = level.player.x+way[1]*4
+                    object.y = level.player.y+way[2]*4
+                    table.insert(level.units_obj, object)
+                    level.units_map[level.player.x*level.size.x + level.player.y] = nil
+                    level.units_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)] = get_object[1]()
+                    level.units_map[(level.player.x+way[1]*4)*level.size.x + (level.player.y+way[2]*4)] = get_object[5]()
+                    level.player.x = level.player.x + way[1]*2
+                    level.player.y = level.player.y + way[2]*2
+                    print("move flame")
+                else
+                    print("cant move flame to obj")
+                end
+            end
+        else
+            print("Game over")
+        end
+    end
 end
 
 local level = level_load(32)
@@ -102,17 +167,21 @@ end
 function love.keypressed(key)
     if key=='w' then
         key = 'up'
+        val = {-1, 0}
     end
     if key=='s' then
         key = 'down'
+        val = {1, 0}
     end
     if key=='a' then
         key = 'left'
+        val = {0, -1}
     end
     if key=='d' then
         key = 'right'
+        val = {0, 1}
     end
-    level_move(level, key)
+    level_move(level, val)
 end
 
 function love.mousepressed(x, y, button)

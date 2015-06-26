@@ -34,6 +34,7 @@ get_object[2] = function ()
     enemy_red.animations.left = load_animation('ystrip.png', '1-4', 3, 0.3)
     enemy_red.animations.right = load_animation('ystrip.png', '1-4', 4, 0.3)
     enemy_red.sprite = enemy_red.animations.down
+    enemy_red.index = 2
     return enemy_red
 end 
 
@@ -46,6 +47,7 @@ get_object[4] = function ()
     enemy_blue.animations.left = load_animation('xstrip.png', '1-4', 3, 0.3)
     enemy_blue.animations.right = load_animation('xstrip.png', '1-4', 4, 0.3)
     enemy_blue.sprite = enemy_blue.animations.down
+    enemy_blue.index = 4
     return enemy_blue
 end
 
@@ -62,6 +64,7 @@ get_object[3] = function ()
     enemy_violet.animations.up_left = load_animation('diag.png', '1-4', 3, 0.3)
     enemy_violet.animations.up_right = load_animation('diag.png', '1-4', 4, 0.3)
     enemy_violet.sprite = enemy_violet.animations.down_right
+    enemy_violet.index = 3
     return enemy_violet
 end
 
@@ -73,47 +76,55 @@ get_object[1] = function ()
     player.animations.left = load_animation('wstrip.png', 3, '1-4', 0.3)
     player.animations.right = load_animation('wstrip.png', 4, '1-4', 0.3)
     player.sprite = player.animations.down
+    player.index = 1
     return player
 end
 
 get_object[5] = function ()
     local flame = {}
     flame.sprite = load_animation('flame.png', '1-4', 1, 0.1)
+    flame.index = 5
     return flame
 end
 
 get_object[6] = function ()
-    local flame = {}
-    flame.sprite = load_animation('exitIdle.png', '1-3', 1, 0.1)
-    return flame
+    local exit = {}
+    exit.sprite = load_animation('exitIdle.png', '1-3', 1, 0.1)
+    exit.index = 6
+    return exit
 end
 
 get_object[7] = function ()
     local teleport = {}
     teleport.sprite = load_animation('tele.png', '1-4', 1, 0.1)
+    teleport.index = 7
     return teleport
 end
 
 get_object[13] = function ()
     local wall = {}
     wall.sprite = load_animation('vwall.png', 1, 1, 0.1)
+    wall.index = 13
     return wall
 end
 
 get_object[14] = function ()
     local wall = {}
     wall.sprite = load_animation('cVWall.png', 1, 1, 0.1)
+    wall.index = 14
     return wall
 end
 
 get_object[15] = function ()
     local wall = {}
     wall.sprite = load_animation('hwall.png', 1, 1, 0.1)
+    wall.index = 15
     return wall
 end
 
 get_object[16] = function ()
     local wall = {}
     wall.sprite = load_animation('cHWall.png', 1, 1, 0.1)
+    wall.index = 16
     return wall
 end
