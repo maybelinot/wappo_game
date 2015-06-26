@@ -1,3 +1,4 @@
+require 'animations'
 local anim8 = require 'libs/anim8'
 local tilesize = {40, 52}
 
@@ -91,11 +92,11 @@ function love.load()
 end
 
 function love.update(dt)
-    enemy_red.animation:update(dt)
+    enemy_violet.animation:update(dt)
 end
 
 function love.draw()
-    enemy_red.animation:draw(100, 100)
+    enemy_violet.animation:draw(100, 100)
 
     -- love.graphics.draw(bcg, deltax, deltay)
 
