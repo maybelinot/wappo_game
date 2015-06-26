@@ -1,7 +1,38 @@
+local anim8 = require 'libs/anim8'
+local tilesize = {40, 52}
+
+local image, g
+
+function load_animation(image, spritesx, spritesy, delay)
+    local animation = {}
+    animation.image = love.graphics.newImage('sprites/'..image)
+    local g = anim8.newGrid(
+        tilesize[1], 
+        tilesize[2], 
+        animation.image:getWidth(), 
+        animation.image:getHeight())
+    animation.animation = anim8.newAnimation(g(spritesx, spritesy), delay)
+    animation.update = function(self, dt)
+        self.animation:update(dt)
+    end
+    animation.draw = function(self, x, y)
+        self.animation:draw(self.image, x, y)
+    end 
+    return animation
+end
+
+local enemy_red = {}
+enemy_red.animations = {}
+enemy_red.animations.kill = load_animation('ykill.png', '1-3', 1, 0.1)
+enemy_red.animation = enemy_red.animations.kill
+
 function love.load()
+
+    
+
     -- width, height = love.window.getDesktopDimensions( display )
-    image = love.graphics.newImage('Sprites/wicon.png')
-    bcg = love.graphics.newImage('Sprites/bggame.png')
+    image = love.graphics.newImage('sprites/wicon.png')
+    bcg = love.graphics.newImage('sprites/bggame.png')
     -- -1 - borders
     -- 0 - empty
     -- 1 - player
@@ -14,46 +45,80 @@ function love.load()
     -- 8 - grey obstacle horizontal
     -- 9 - grey obstacle vertical
     -- level 32
-    map = { 
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1,  0,  0,  0,  0,  0,  0,  0,  0,  6,  0,  0, -1},
-            {-1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1},
-            {-1,  0,  0,  0,  0,  0,  0,  0,  9,  0,  0,  0, -1},
-            {-1,  8,  0,  0,  0,  0,  0,  0,  0,  8,  0,  0, -1},
-            {-1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1},
-            {-1,  0,  0,  0,  0,  8,  0,  0,  0,  8,  0,  0, -1},
-            {-1,  5,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
-            {-1,  8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  8, -1},
-            {-1,  0,  0,  7,  0,  0,  0,  0,  9,  0,  0,  3, -1},
-            {-1,  0,  0,  0,  0,  0,  0,  8,  0,  0,  0,  8, -1},
-            {-1,  0,  0,  0,  0,  5,  0,  0,  0,  0,  0,  0, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
-          }
-    player_imgset = love.graphics.newImage("Sprites/wstrip.png")
-    red_enemy_imgset = love.graphics.newImage("Sprites/ystrip.png")
-    blue_enemy_imgset = love.graphics.newImage("Sprites/xstrip.png")
-    teleport_imgset = love.graphics.newImage("Sprites/tele.png")
-    flame_imgset = love.graphics.newImage("Sprites/flame.png")
-    hor_wall_img = love.graphics.newImage("Sprites/hwall.png")
-    ver_wall_img = love.graphics.newImage("Sprites/vwall.png")
-    exit_img = love.graphics.newImage("Sprites/exit.png")
+    -- map = { 
+    --         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    --         {-1,  0,  0,  0,  0,  0,  0,  0,  0,  6,  0,  0, -1},
+    --         {-1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1},
+    --         {-1,  0,  0,  0,  0,  0,  0,  0,  9,  0,  0,  0, -1},
+    --         {-1,  8,  0,  0,  0,  0,  0,  0,  0,  8,  0,  0, -1},
+    --         {-1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1},
+    --         {-1,  0,  0,  0,  0,  8,  0,  0,  0,  8,  0,  0, -1},
+    --         {-1,  5,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0, -1},
+    --         {-1,  8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  8, -1},
+    --         {-1,  0,  0,  7,  0,  0,  0,  0,  9,  0,  0,  3, -1},
+    --         {-1,  0,  0,  0,  0,  0,  0,  8,  0,  0,  0,  8, -1},
+    --         {-1,  0,  0,  0,  0,  5,  0,  0,  0,  0,  0,  0, -1},
+    --         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
+    --       }
+    -- player_imgset = love.graphics.newImage("Sprites/wstrip.png")
+    -- red_enemy_imgset = love.graphics.newImage("Sprites/ystrip.png")
+    -- blue_enemy_imgset = love.graphics.newImage("Sprites/xstrip.png")
+    -- teleport_imgset = love.graphics.newImage("Sprites/tele.png")
+    -- flame_imgset = love.graphics.newImage("Sprites/flame.png")
+    -- hor_wall_img = love.graphics.newImage("Sprites/hwall.png")
+    -- ver_wall_img = love.graphics.newImage("Sprites/vwall.png")
+    -- exit_img = love.graphics.newImage("Sprites/exit.png")
  
     -- the Mesh DrawMode "fan" works well for 4-vertex Meshes.
-    units_quad = love.graphics.newQuad(0, 0, player_imgset:getWidth()/4, player_imgset:getHeight()/4, player_imgset:getDimensions())
-    obj_quad = love.graphics.newQuad(0, 0, teleport_imgset:getWidth()/4, teleport_imgset:getHeight(), teleport_imgset:getDimensions())
-    love.graphics.setBackgroundColor(104, 136, 248)
-    love.window.setMode(650, 650)
+    -- units_quad = love.graphics.newQuad(0, 0, player_imgset:getWidth()/4, player_imgset:getHeight()/4, player_imgset:getDimensions())
+    -- obj_quad = love.graphics.newQuad(0, 0, teleport_imgset:getWidth()/4, teleport_imgset:getHeight(), teleport_imgset:getDimensions())
+    -- love.graphics.setBackgroundColor(104, 136, 248)
+    -- love.window.setMode(650, 650)
 
-    song1 = love.audio.newSource("Audio/wappo2.mid", "static")
+    song1 = love.audio.newSource("audio/wappo2.ogg", "static")
     -- song1:setVolume(0.3)
-    song1:play()
-    x_pos=0
-    y_pos=0
-    deltax = 40
-    deltay = 52
+    -- song1:play()
+    -- x_pos=0
+    -- y_pos=0
+    -- deltax = 40
+    -- deltay = 52
+    level = load_level(32)
+
 end
 
 function love.update(dt)
+    enemy_red.animation:update(dt)
+end
+
+function love.draw()
+    enemy_red.animation:draw(100, 100)
+
+    -- love.graphics.draw(bcg, deltax, deltay)
+
+    -- for i=1,#map-1 do
+    --     for j=1,#map-1 do
+    --         if map[j][i]==1 then
+    --             love.graphics.draw(player_imgset, units_quad, i*deltax/2, j*deltay/2)
+    --         elseif map[j][i]==2 then
+    --             love.graphics.draw(blue_enemy_imgset, units_quad, i*deltax/2, j*deltay/2)
+    --         elseif map[j][i]==3 then
+    --             love.graphics.draw(red_enemy_imgset, units_quad, i*deltax/2, j*deltay/2)
+    --         elseif map[j][i]==4 then
+    --             -- love.graphics.draw(player_imgset, units_quad, i*deltax, j*(d-1)eltay)
+    --         elseif map[j][i]==5 then
+    --             love.graphics.draw(teleport_imgset, obj_quad, i*deltax/2, j*deltay/2)
+    --         elseif map[j][i]==6 then
+    --             love.graphics.draw(exit_img, i*deltax/2, j*deltay/2)
+    --         elseif map[j][i]==7 then
+    --             love.graphics.draw(flame_imgset, obj_quad, i*deltax/2, j*deltay/2)
+    --         elseif map[j][i]==8 then
+    --             love.graphics.draw(hor_wall_img, i*deltax/2, j*deltay+deltay/2)
+    --         elseif map[j][i]==9 then
+    --             love.graphics.draw(ver_wall_img, (i*deltax+deltax-6)/2, (j*deltay+hor_wall_img:getHeight())/2)
+    --         end
+    --     end
+    -- end
+    -- love.graphics.draw(player_imgset, units_quad, x_pos, y_pos)
 end
 
 function love.keypressed(key)
@@ -72,50 +137,28 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, button)
-   if button == "l" then
-        local delta_x = math.abs(x_pos-x)
-        local delta_y = math.abs(y_pos-y)
-        if delta_x > delta_y then
-            if x > x_pos then
-                x_pos = x_pos + deltax
-            else
-                x_pos = x_pos - deltax
-            end
-        else            
-            if y > y_pos then
-                y_pos = y_pos + deltay
-            else
-                y_pos = y_pos - deltay
-            end
-        end
-    end
+   -- if button == "l" then
+   --      local delta_x = math.abs(x_pos-x)
+   --      local delta_y = math.abs(y_pos-y)
+   --      if delta_x > delta_y then
+   --          if x > x_pos then
+   --              x_pos = x_pos + deltax
+   --          else
+   --              x_pos = x_pos - deltax
+   --          end
+   --      else            
+   --          if y > y_pos then
+   --              y_pos = y_pos + deltay
+   --          else
+   --              y_pos = y_pos - deltay
+   --          end
+   --      end
+   --  end
 end
 
-function love.draw()
-    love.graphics.draw(bcg, deltax, deltay)
 
-    for i=1,#map-1 do
-        for j=1,#map-1 do
-            if map[j][i]==1 then
-                love.graphics.draw(player_imgset, units_quad, i*deltax/2, j*deltay/2)
-            elseif map[j][i]==2 then
-                love.graphics.draw(blue_enemy_imgset, units_quad, i*deltax/2, j*deltay/2)
-            elseif map[j][i]==3 then
-                love.graphics.draw(red_enemy_imgset, units_quad, i*deltax/2, j*deltay/2)
-            elseif map[j][i]==4 then
-                -- love.graphics.draw(player_imgset, units_quad, i*deltax, j*(d-1)eltay)
-            elseif map[j][i]==5 then
-                love.graphics.draw(teleport_imgset, obj_quad, i*deltax/2, j*deltay/2)
-            elseif map[j][i]==6 then
-                love.graphics.draw(exit_img, i*deltax/2, j*deltay/2)
-            elseif map[j][i]==7 then
-                love.graphics.draw(flame_imgset, obj_quad, i*deltax/2, j*deltay/2)
-            elseif map[j][i]==8 then
-                love.graphics.draw(hor_wall_img, i*deltax/2, (j*deltay+deltay/2)
-            elseif map[j][i]==9 then
-                love.graphics.draw(ver_wall_img, (i*deltax+deltax-6)/2, (j*deltay+hor_wall_img:getHeight())/2)
-            end
-        end
-    end
-    love.graphics.draw(player_imgset, units_quad, x_pos, y_pos)
+function load_level(number)
+    level = require("maps/level"..number)
+    return level['layers'][1]['data']
 end
+
