@@ -1,36 +1,4 @@
-require 'animations'
-local anim8 = require 'libs/anim8'
-local tilesize = {40, 52}
-
-local image, g
-
-function load_animation(image, spritesx, spritesy, delay)
-    local animation = {}
-    animation.image = love.graphics.newImage('sprites/'..image)
-    local g = anim8.newGrid(
-        tilesize[1], 
-        tilesize[2], 
-        animation.image:getWidth(), 
-        animation.image:getHeight())
-    animation.animation = anim8.newAnimation(g(spritesx, spritesy), delay)
-    animation.update = function(self, dt)
-        self.animation:update(dt)
-    end
-    animation.draw = function(self, x, y)
-        self.animation:draw(self.image, x, y)
-    end 
-    return animation
-end
-
-local enemy_red = {}
-enemy_red.animations = {}
-enemy_red.animations.kill = load_animation('ykill.png', '1-3', 1, 0.1)
-enemy_red.animations.up = load_animation('ystrip.png', '1-4', 1, 0.3)
-enemy_red.animations.down = load_animation('ystrip.png', '1-4', 2, 0.3)
-enemy_red.animations.left = load_animation('ystrip.png', '1-4', 3, 0.3)
-enemy_red.animations.right = load_animation('ystrip.png', '1-4', 4, 0.3)
-enemy_red.animation = enemy_red.animations.down
-
+require 'units'
 
 local level = level_load(32)
 
