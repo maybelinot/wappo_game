@@ -79,28 +79,23 @@ function level_move(level, key, way)
     else
         local cell = level.units_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)]
         if cell == nil then
-            local cell = level.floor_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)]
+            level.units_map[level.player.x*level.size.x + level.player.y] = nil
+            local object = get_object[1]()
+            object.x = level.player.x + way[1]*2
+            object.y = level.player.y + way[2]*2
+            object.sprite = level.player.animations[key]
+            object.anim_x = way[1]*(-52)
+            object.anim_y = way[2]*(-40)
+            level.units_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)] = object
+            level.player = object
+            level.is_moving = true 
+            flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.is_moving = false end)
+            local cell = level.floor_map[(level.player.x)*level.size.x + (level.player.y)]
             if cell == nil then
-                level.units_map[level.player.x*level.size.x + level.player.y] = nil
-                level.units_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)] = get_object[1]()
-                level.player.x = level.player.x + way[1]*2
-                level.player.y = level.player.y + way[2]*2
-                level.player.sprite = level.player.animations[key]
-                level.player.anim_x = way[1]*(-52)
-                level.player.anim_y = way[2]*(-40)
-                level.is_moving = true 
-                flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("elasticinout"):oncomplete(function () level.is_moving = false end)
                 print("move ok")
             elseif cell.index == 6 then
-                level.player.x = level.player.x + way[1]*2
-                level.player.y = level.player.y + way[2]*2
                 print("WIN")
             elseif cell.index == 7 then
-                level.units_map[level.player.x*level.size.x + level.player.y] = nil
-                level.units_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)] = get_object[1]()
-                level.player.x = level.player.x + way[1]*2
-                level.player.y = level.player.y + way[2]*2
-                level.player.sprite = level.player.animations[key]
                 print("animation to portal")
                 for i=1,#level.floor_obj do
                     if level.floor_obj[i].index==7 and (level.floor_obj[i].x ~= level.player.x or level.floor_obj[i].y ~= level.player.y) then
