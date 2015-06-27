@@ -17,9 +17,9 @@ function level_load(number)
         for j=1,level.size.y do
             local cell = level.map[i*level.size.x + j]
             if cell == 1 or cell == 2 or cell == 3 or cell == 4 or cell == 5 then
-                level.units_map[i*level.size.x + j] = get_object[cell]()
-                level.floor_map[i*level.size.x + j] = nil
                 local object = get_object[cell]()
+                level.units_map[i*level.size.x + j] = object
+                level.floor_map[i*level.size.x + j] = nil
                 object.x = i
                 object.y = j
                 if cell == 1 then
@@ -28,9 +28,9 @@ function level_load(number)
                     table.insert(level.units_obj, object)
                 end
             elseif cell == 6 or cell == 7 or cell == 13 or cell == 14 or cell == 15 or cell == 16 then
-                level.units_map[i*level.size.x + j] = nil
-                level.floor_map[i*level.size.x + j] = get_object[cell]()
                 local object = get_object[cell]()
+                level.units_map[i*level.size.x + j] = nil
+                level.floor_map[i*level.size.x + j] = object
                 object.x = i
                 object.y = j
                 table.insert(level.floor_obj, object)
@@ -165,21 +165,16 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key=='w' then
-        key = 'up'
+    if key=='w' or key=='up' then
         val = {-1, 0}
-    end
-    if key=='s' then
-        key = 'down'
+    elseif key=='s' or key=='down' then
         val = {1, 0}
-    end
-    if key=='a' then
-        key = 'left'
+    elseif key=='a' or key=='left' then
         val = {0, -1}
-    end
-    if key=='d' then
-        key = 'right'
+    elseif key=='d' or key=='right' then
         val = {0, 1}
+    else
+        return -- move only if previous cases
     end
     level_move(level, val)
 end
