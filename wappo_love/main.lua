@@ -52,14 +52,34 @@ function take_element(list, x, y)
     return nil
 end
 
+function move_unit(level, way, key, unit, id)
+    if unit=='player' then
+        level.player.x = level.player.x + way[1]*2
+        level.player.y = level.player.y + way[2]*2
+        level.player.sprite = level.player.animations[key]
+        level.player.anim_x = way[1]*(-52)
+        level.player.anim_y = way[2]*(-40)
+    else
+        level[unit][id].x = level[unit][id].x + way[1]*2
+        level[unit][id].y = level[unit][id].y + way[2]*2
+        level[unit][id].anim_x = way[1]*(-52)
+        level[unit][id].anim_y = way[2]*(-40)
+        if unit=='floor_obj' then
+            level[unit][id].sprite = level[unit][id].animations[key]
+        end
+    end
+    level.is_moving = true 
+    return level
+end
+
 function level_draw(level)
     for i=1,#level.floor_obj do
         level.floor_obj[i].sprite:draw(level.floor_obj[i].y*20-20, level.floor_obj[i].x*26+5)
     end
-    for i=1,#level.units_obj do
-        level.units_obj[i].sprite:draw(level.units_obj[i].y*20-20, level.units_obj[i].x*26+5)
-    end
     level.player.sprite:draw(level.player.y*20-20 + level.player.anim_y, level.player.x*26+5 + level.player.anim_x)
+    for i=1,#level.units_obj do
+        level.units_obj[i].sprite:draw(level.units_obj[i].y*20-20 + level.units_obj[i].anim_y, level.units_obj[i].x*26+5 + level.units_obj[i].anim_x)
+    end
 end
 
 function level_update(level, dt)
@@ -73,65 +93,72 @@ function level_update(level, dt)
 end
 
 function level_move(level, key, way)
+    if level.player.x+way[1]*2 > level.size.x or level.player.x+way[1]*2 < 0 or level.player.y+way[2]*2 > level.size.y or level.player.y+way[2]*2 < 1 then
+        level.player.sprite = level.player.animations[key]
+        flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout") end)
+        print('cant move to borders')
+        return
+    end
     local cell = take_element(level.floor_obj, level.player.x+way[1], level.player.y+way[2])
     if cell ~= nil then
+        level.player.sprite = level.player.animations[key]
+        flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout") end)
+        return
         print("cant move, obstacle")
-    else
-        local cell = take_element(level.units_obj, level.player.x+way[1]*2, level.player.y+way[2]*2)
+    end
+    local cell = take_element(level.units_obj, level.player.x+way[1]*2, level.player.y+way[2]*2)
+    if cell == nil then
+        level = move_unit(level, way, key, 'player')
+        local cell = take_element(level.floor_obj, level.player.x, level.player.y)
         if cell == nil then
-            level.player.x = level.player.x + way[1]*2
-            level.player.y = level.player.y + way[2]*2
-            level.player.sprite = level.player.animations[key]
-            level.player.anim_x = way[1]*(-52)
-            level.player.anim_y = way[2]*(-40)
-            level.is_moving = true 
             flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.is_moving = false end)
-            local cell = take_element(level.floor_obj, level.player.x, level.player.y)
-            if cell == nil then
-                print("move ok")
-            elseif cell.index == 6 then
-                print("WIN")
-            elseif cell.index == 7 then
-                print("animation to portal")
-                for i=1,#level.floor_obj do
-                    if level.floor_obj[i].index==7 and (level.floor_obj[i].x ~= level.player.x or level.floor_obj[i].y ~= level.player.y) then
-                        print('ok')
-                        level.player.x = level.floor_obj[i].x
-                        level.player.y = level.floor_obj[i].y
+            print("move ok")
+        elseif cell.index == 6 then
+            flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.is_moving = false end)
+            print("WIN")
+        elseif cell.index == 7 then
+            print("animation to portal")
+            for i=1,#level.floor_obj do
+                if level.floor_obj[i].index==cell.index and (level.floor_obj[i].x ~= level.player.x or level.floor_obj[i].y ~= level.player.y) then
+                    print('ok')
+                    flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.is_moving = false                        
+                                                                                                                    level.player.x = level.floor_obj[i].x
+                                                                                                                    level.player.y = level.floor_obj[i].y end)
+                    break
+                end
+            end
+        end
+    elseif cell.index == 5 then
+        local cell = take_element(level.floor_obj, level.player.x+way[1]*3, level.player.y+way[2]*3)
+        if cell ~= nil and cell.index >=13 and cell.index <= 16 then
+            level.player.sprite = level.player.animations[key]
+            flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout") end)
+            print("cant move flame to obstacle")
+        else
+            local unit = take_element(level.units_obj, level.player.x+way[1]*4, level.player.y+way[2]*4)
+            local floor = take_element(level.floor_obj, level.player.x+way[1]*4, level.player.y+way[2]*4)
+            if unit == nil and floor == nil then
+                for i=1,#level.units_obj do
+                    if level.units_obj[i].index == 5 and level.units_obj[i].x == level.player.x+way[1]*2 and level.units_obj[i].y == level.player.y+way[2]*2 then
+                        level = move_unit(level, way, key, 'units_obj', i)
+                        flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.is_moving = false end)
                         break
                     end
                 end
-            end
-        elseif cell.index == 5 then
-            local cell = take_element(level.floor_obj, level.player.x+way[1]*3, level.player.y+way[2]*3)
-            if cell ~= nil and cell.index >=13 and cell.index <= 16 then
-                print("cant move flame to obstacle")
+                level = move_unit(level, way, key, 'player')
+                flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.is_moving = false end)
+                print("move flame")
             else
-                local unit = take_element(level.units_obj, level.player.x+way[1]*4, level.player.y+way[2]*4)
-                local floor = take_element(level.floor_obj, level.player.x+way[1]*4, level.player.y+way[2]*4)
-                if unit == nil and floor == nil then
-                    for i=1,#level.units_obj do
-                        if level.units_obj[i].index == 5 and level.units_obj[i].x == level.player.x+way[1]*2 and level.units_obj[i].y == level.player.y+way[2]*2 then
-                            table.remove(level.units_obj, i)
-                            break
-                        end
-                    end
-
-                    local object = get_object[5]()
-                    object.x = level.player.x+way[1]*4
-                    object.y = level.player.y+way[2]*4
-                    table.insert(level.units_obj, object)
-                    level.player.x = level.player.x + way[1]*2
-                    level.player.y = level.player.y + way[2]*2
-                    level.player.sprite = level.player.animations[key]
-                    print("move flame")
-                else
-                    print("cant move flame to obj")
-                end
+                level.player.sprite = level.player.animations[key]
+                flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout") end)
+                print("cant move flame to obj")
             end
-        else
-            print("Game over")
         end
+    else
+        cell.animation = cell.animations.kill
+        level = move_unit(level, way, key, 'player')
+        flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.is_moving = false end)
+        print("Game over")
     end
 end
 
@@ -201,7 +228,10 @@ function love.mousepressed(x, y, button)
    --      end
    --  end
 end
-
+ss = {}
+ss.x = {}
+ss.x.y = 5
+print(ss['x']['self'])
 
 
 

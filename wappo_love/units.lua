@@ -35,6 +35,8 @@ get_object[2] = function ()
     enemy_red.animations.right = load_animation('ystrip.png', '1-4', 4, 0.3)
     enemy_red.sprite = enemy_red.animations.down
     enemy_red.index = 2
+    enemy_red.anim_x = 0
+    enemy_red.anim_y = 0
     return enemy_red
 end 
 
@@ -48,6 +50,8 @@ get_object[4] = function ()
     enemy_blue.animations.right = load_animation('xstrip.png', '1-4', 4, 0.3)
     enemy_blue.sprite = enemy_blue.animations.down
     enemy_blue.index = 4
+    enemy_blue.anim_x = 0
+    enemy_blue.anim_y = 0
     return enemy_blue
 end
 
@@ -65,6 +69,8 @@ get_object[3] = function ()
     enemy_violet.animations.up_right = load_animation('diag.png', '1-4', 4, 0.3)
     enemy_violet.sprite = enemy_violet.animations.down_right
     enemy_violet.index = 3
+    enemy_violet.anim_x = 0
+    enemy_violet.anim_y = 0
     return enemy_violet
 end
 
@@ -86,6 +92,8 @@ get_object[5] = function ()
     local flame = {}
     flame.sprite = load_animation('flame.png', '1-4', 1, 0.1)
     flame.index = 5
+    flame.anim_x = 0
+    flame.anim_y = 0
     return flame
 end
 
