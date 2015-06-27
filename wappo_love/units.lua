@@ -77,6 +77,8 @@ get_object[1] = function ()
     player.animations.right = load_animation('wstrip.png', 4, '1-4', 0.3)
     player.sprite = player.animations.down
     player.index = 1
+    player.anim_x = 0
+    player.anim_y = 0
     return player
 end
 

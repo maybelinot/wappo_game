@@ -1,5 +1,5 @@
 require 'units'
-
+flux = require "libs/flux"
 
 function level_load(number)
     local tiled_level = require("maps/level"..number)['layers'][1]
@@ -13,15 +13,16 @@ function level_load(number)
     level.units_obj = {}
     level.units_map = {}
     level.player = nil
+    level.is_moving = false
     for i=0,level.size.x-1 do
         for j=1,level.size.y do
             local cell = level.map[i*level.size.x + j]
             if cell == 1 or cell == 2 or cell == 3 or cell == 4 or cell == 5 then
                 local object = get_object[cell]()
-                level.units_map[i*level.size.x + j] = object
-                level.floor_map[i*level.size.x + j] = nil
                 object.x = i
                 object.y = j
+                level.units_map[i*level.size.x + j] = object
+                level.floor_map[i*level.size.x + j] = nil
                 if cell == 1 then
                     level.player = object
                 else
@@ -29,10 +30,10 @@ function level_load(number)
                 end
             elseif cell == 6 or cell == 7 or cell == 13 or cell == 14 or cell == 15 or cell == 16 then
                 local object = get_object[cell]()
-                level.units_map[i*level.size.x + j] = nil
-                level.floor_map[i*level.size.x + j] = object
                 object.x = i
                 object.y = j
+                level.units_map[i*level.size.x + j] = nil
+                level.floor_map[i*level.size.x + j] = object
                 table.insert(level.floor_obj, object)
             else
                 level.units_map[i*level.size.x + j] = nil
@@ -58,7 +59,7 @@ function level_draw(level)
     for i=1,#level.units_obj do
         level.units_obj[i].sprite:draw(level.units_obj[i].y*20-20, level.units_obj[i].x*26+5)
     end
-    level.player.sprite:draw(level.player.y*20-20, level.player.x*26+5)
+    level.player.sprite:draw(level.player.y*20-20 + level.player.anim_y, level.player.x*26+5 + level.player.anim_x)
 end
 
 function level_update(level, dt)
@@ -71,7 +72,7 @@ function level_update(level, dt)
     level.player.sprite:update(dt)
 end
 
-function level_move(level, way)
+function level_move(level, key, way)
     local cell = level.floor_map[(level.player.x+way[1])*level.size.x + (level.player.y+way[2])]
     if cell ~= nil then
         print("cant move, obstacle")
@@ -84,6 +85,11 @@ function level_move(level, way)
                 level.units_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)] = get_object[1]()
                 level.player.x = level.player.x + way[1]*2
                 level.player.y = level.player.y + way[2]*2
+                level.player.sprite = level.player.animations[key]
+                level.player.anim_x = way[1]*(-52)
+                level.player.anim_y = way[2]*(-40)
+                level.is_moving = true 
+                flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("elasticinout"):oncomplete(function () level.is_moving = false end)
                 print("move ok")
             elseif cell.index == 6 then
                 level.player.x = level.player.x + way[1]*2
@@ -94,6 +100,7 @@ function level_move(level, way)
                 level.units_map[(level.player.x+way[1]*2)*level.size.x + (level.player.y+way[2]*2)] = get_object[1]()
                 level.player.x = level.player.x + way[1]*2
                 level.player.y = level.player.y + way[2]*2
+                level.player.sprite = level.player.animations[key]
                 print("animation to portal")
                 for i=1,#level.floor_obj do
                     if level.floor_obj[i].index==7 and (level.floor_obj[i].x ~= level.player.x or level.floor_obj[i].y ~= level.player.y) then
@@ -129,6 +136,7 @@ function level_move(level, way)
                     level.units_map[(level.player.x+way[1]*4)*level.size.x + (level.player.y+way[2]*4)] = get_object[5]()
                     level.player.x = level.player.x + way[1]*2
                     level.player.y = level.player.y + way[2]*2
+                    level.player.sprite = level.player.animations[key]
                     print("move flame")
                 else
                     print("cant move flame to obj")
@@ -156,6 +164,7 @@ function love.load()
 end
 
 function love.update(dt)
+    flux.update(dt)
     level_update(level, dt)
 end
 
@@ -165,18 +174,25 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key=='w' or key=='up' then
+    if key=='w' then
+        key = 'up'
         val = {-1, 0}
-    elseif key=='s' or key=='down' then
-        val = {1, 0}
-    elseif key=='a' or key=='left' then
-        val = {0, -1}
-    elseif key=='d' or key=='right' then
-        val = {0, 1}
-    else
-        return -- move only if previous cases
     end
-    level_move(level, val)
+    if key=='s' then
+        key = 'down'
+        val = {1, 0}
+    end
+    if key=='a' then
+        key = 'left'
+        val = {0, -1}
+    end
+    if key=='d' then
+        key = 'right'
+        val = {0, 1}
+    end
+    if level.is_moving~=true then
+        level_move(level, key, val)
+    end
 end
 
 function love.mousepressed(x, y, button)
