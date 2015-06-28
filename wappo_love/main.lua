@@ -190,7 +190,12 @@ function level_move(level, key, way)
         end
     else
         -- если там enemy, ставим анимацию kill
-        cell.animation = cell.animations.kill
+        for i=1,#level.units_obj do
+            if level.units_obj[i].index <=4 and level.units_obj[i].x==level.player.x+way[1]*2 and level.units_obj[i].y==level.player.y+way[2]*2 then
+                print("ok")
+                level.units_obj[i].sprite = level.units_obj[i].animations.kill
+            end
+        end
         -- двигаем игрока
         level = move_unit(level, way, key, 'player')
         -- ставим твининг
