@@ -74,7 +74,6 @@ function move_unit(level, way, key, unit, id)
         end
     end
     level.is_moving = true 
-    return level
 end
 
 function level_draw(level)
@@ -125,7 +124,7 @@ function player_move(level, key, way)
     local cell = take_element(level.units_obj, level.player.x+way[1]*2, level.player.y+way[2]*2)
     if cell == nil then
         -- если клетка пустая то игрок туда идет
-        level = move_unit(level, way, key, 'player')
+        move_unit(level, way, key, 'player')
         -- смотрим какие floor_obj есть на этой клетке
         local cell = take_element(level.floor_obj, level.player.x, level.player.y)
         -- если никаких или выход то ставим обычный твининг
@@ -176,14 +175,14 @@ function player_move(level, key, way)
                             return
                         end
                         --  если не выходит за границы то двигаем flame
-                        level = move_unit(level, way, key, 'units_obj', i)
+                        move_unit(level, way, key, 'units_obj', i)
                         -- ставим твининг передвижения
-                        flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end)
+                        flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout")
                         break
                     end
                 end
                 -- после того как передвинули flame двигаем и игрока
-                level = move_unit(level, way, key, 'player')
+                move_unit(level, way, key, 'player')
                 -- твининг для игрока
                 flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end)
                 print("move flame")
@@ -198,7 +197,7 @@ function player_move(level, key, way)
         -- если там enemy, ставим анимацию kill
         cell.sprite = cell.animations.kill
         -- двигаем игрока
-        level = move_unit(level, way, key, 'player')
+        move_unit(level, way, key, 'player')
         -- ставим твининг
         flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end)
         print("Game over")
@@ -250,12 +249,20 @@ function enn(level)
     enemy_move(level)
 end
 function enemy_move(level)
+    print("NEW MOVE")
     for i=1,#level.units_obj do
         condition = true
         if level.units_obj[i].index<=4 and level.units_obj[i].steps>0 then
             level.units_obj[i].steps = level.units_obj[i].steps - 1
             local direction = {sign(level.player.x - level.units_obj[i].x), sign(level.player.y - level.units_obj[i].y)}
             -- all possibles ways to move
+            -- local directions = {direction}
+            -- if direction[0]~=0 then
+            --     table.insert(directions, {0,direction[2]})
+            -- end
+            -- if direction[1]~=0 then
+            --     table.insert(directions, {direction[1],0})
+            -- end
             local directions = {direction, {0,direction[2]}, {direction[1],0}}
             local ways = {}
             for k, v in pairs(level.units_obj[i].ways) do ways[k] = directions[v] end
@@ -275,7 +282,8 @@ function enemy_move(level)
                         print("not unit")
                         condition = false
                         -- если клетка пустая то unit туда идет
-                        level = move_unit(level, way, keys[k], 'units_obj', i)
+                        print("ADDED anim position", way[1], way[2])
+                        move_unit(level, way, keys[k], 'units_obj', i)
                         -- смотрим какие floor_obj есть на этой клетке
                         local cell = take_element(level.floor_obj, level.units_obj[i].x, level.units_obj[i].y)
                         if cell ~= nil then
@@ -283,13 +291,14 @@ function enemy_move(level)
                         end
                         -- если никаких или выход то ставим обычный твининг
                         if cell == nil then
+                            print(level.units_obj[i].anim_x, level.units_obj[i].anim_y)
                             flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end)
                             print("move ok")
-                            if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then 
+                            if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then
                                 break
                             end
                         elseif cell.index == 6 then
-                            flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end)
+                            -- flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end)
                             print("WIN")
                             if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then 
                                 break
@@ -299,7 +308,6 @@ function enemy_move(level)
                             print("animation to portal")
                             for j=1,#level.floor_obj do
                                 if level.floor_obj[j].index==cell.index and (level.floor_obj[j].x ~= level.units_obj[i].x or level.floor_obj[j].y ~= level.units_obj[i].y) then
-                                    print('ok')
                                     -- ставим твининг на движение и функцию, которая после передвижения меняет позицию игрока на место второго портала
                                     level.units_obj[i].steps = 0
                                     flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.units_obj[i].x = level.floor_obj[j].x
@@ -390,13 +398,3 @@ function love.mousepressed(x, y, button)
    --      end
    --  end
 end
-ss = {}
-ss.x = {}
-ss.x.y = 5
-print(ss['x']['self'])
-
-
-
-
-
-
