@@ -61,13 +61,13 @@ function move_unit(level, way, key, unit, id)
         level.player.x = level.player.x + way[1]*2
         level.player.y = level.player.y + way[2]*2
         level.player.sprite = level.player.animations[key]
-        level.player.anim_x = way[1]*(-52)
-        level.player.anim_y = way[2]*(-40)
+        level.player.anim_x = level.player.anim_x + way[1]*(-52)
+        level.player.anim_y = level.player.anim_y + way[2]*(-40)
     else
         level[unit][id].x = level[unit][id].x + way[1]*2
         level[unit][id].y = level[unit][id].y + way[2]*2
-        level[unit][id].anim_x = way[1]*(-52)
-        level[unit][id].anim_y = way[2]*(-40)
+        level[unit][id].anim_x = level[unit][id].anim_x + way[1]*(-52)
+        level[unit][id].anim_y = level[unit][id].anim_y + way[2]*(-40)
         -- if not a flame then add movement animation
         if level[unit][id].index ~= 5 then
             level[unit][id].sprite = level[unit][id].animations[key]
@@ -277,28 +277,39 @@ function enemy_move(level)
                         -- если клетка пустая то unit туда идет
                         level = move_unit(level, way, keys[k], 'units_obj', i)
                         -- смотрим какие floor_obj есть на этой клетке
-                        local cell = take_element(level.floor_obj, level.units_obj[i], level.units_obj[i])
+                        local cell = take_element(level.floor_obj, level.units_obj[i].x, level.units_obj[i].y)
+                        if cell ~= nil then
+                            print(cell.index)
+                        end
                         -- если никаких или выход то ставим обычный твининг
                         if cell == nil then
                             flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end)
                             print("move ok")
-                            break
+                            if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then 
+                                break
+                            end
                         elseif cell.index == 6 then
                             flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end)
                             print("WIN")
-                            break
+                            if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then 
+                                break
+                            end
                         elseif cell.index == 7 then
                             -- если там портал то ищем второй портал в массиве
                             print("animation to portal")
-                            for i=1,#level.floor_obj do
-                                if level.floor_obj[i].index==cell.index and (level.floor_obj[i].x ~= level.units_obj[i].x or level.floor_obj[i].y ~= level.units_obj[i].y) then
+                            for j=1,#level.floor_obj do
+                                if level.floor_obj[j].index==cell.index and (level.floor_obj[j].x ~= level.units_obj[i].x or level.floor_obj[j].y ~= level.units_obj[i].y) then
                                     print('ok')
                                     -- ставим твининг на движение и функцию, которая после передвижения меняет позицию игрока на место второго портала
-                                    flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.units_obj[i].x = level.floor_obj[i].x
-                                                                                                                                    level.units_obj[i].y = level.floor_obj[i].y 
-                                                                                                                                    enemy_move(level) end)
+                                    level.units_obj[i].steps = 0
+                                    flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.units_obj[i].x = level.floor_obj[j].x
+                                                                                                                                    level.units_obj[i].y = level.floor_obj[j].y
+                                                                                                                                    level.is_moving = false end)
                                     break
                                 end
+                            end
+                            if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then 
+                                break
                             end
                         end
                     end
