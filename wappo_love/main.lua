@@ -246,7 +246,14 @@ function enn(level)
             level.units_obj[i].steps = 3
         end
     end
-    enemy_move(level)
+    level.moving_enemy_count = 1
+    enemy_step(level)
+end
+function enemy_step(level)
+    level.moving_enemy_count = level.moving_enemy_count - 1
+    if level.moving_enemy_count == 0 then
+        enemy_move(level)
+    end
 end
 function enemy_move(level)
     print("NEW MOVE")
@@ -283,6 +290,7 @@ function enemy_move(level)
                         condition = false
                         -- если клетка пустая то unit туда идет
                         print("ADDED anim position", way[1], way[2])
+                        level.moving_enemy_count = level.moving_enemy_count + 1
                         move_unit(level, way, keys[k], 'units_obj', i)
                         -- смотрим какие floor_obj есть на этой клетке
                         local cell = take_element(level.floor_obj, level.units_obj[i].x, level.units_obj[i].y)
@@ -290,17 +298,11 @@ function enemy_move(level)
                             print(cell.index)
                         end
                         -- если никаких или выход то ставим обычный твининг
-                        if cell == nil then
+                        if cell == nil or cell.index == 6 then
                             print(level.units_obj[i].anim_x, level.units_obj[i].anim_y)
-                            flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end)
+                            flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_step(level) end)
                             print("move ok")
                             if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then
-                                break
-                            end
-                        elseif cell.index == 6 then
-                            -- flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end)
-                            print("WIN")
-                            if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then 
                                 break
                             end
                         elseif cell.index == 7 then
@@ -312,7 +314,8 @@ function enemy_move(level)
                                     level.units_obj[i].steps = 0
                                     flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.units_obj[i].x = level.floor_obj[j].x
                                                                                                                                     level.units_obj[i].y = level.floor_obj[j].y
-                                                                                                                                    level.is_moving = false end)
+                                                                                                                                    level.is_moving = false
+                                                                                                                                    enemy_step(level) end)
                                     break
                                 end
                             end
@@ -332,7 +335,7 @@ function enemy_move(level)
 end
 
 
-local level = level_load(32)
+local level = level_load(57)
 
 function love.load()
     -- width, height = love.window.getDesktopDimensions( display )
