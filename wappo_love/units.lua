@@ -37,6 +37,8 @@ get_object[2] = function ()
     enemy_red.index = 2
     enemy_red.anim_x = 0
     enemy_red.anim_y = 0
+    enemy_red.steps = 2
+    enemy_red.ways = {3,2}
     return enemy_red
 end 
 
@@ -52,6 +54,8 @@ get_object[4] = function ()
     enemy_blue.index = 4
     enemy_blue.anim_x = 0
     enemy_blue.anim_y = 0
+    enemy_blue.steps = 2
+    enemy_blue.ways = {2,3}
     return enemy_blue
 end
 
@@ -71,6 +75,8 @@ get_object[3] = function ()
     enemy_violet.index = 3
     enemy_violet.anim_x = 0
     enemy_violet.anim_y = 0
+    enemy_violet.steps = 3
+    enemy_violet.ways = {1,2,3}
     return enemy_violet
 end
 
