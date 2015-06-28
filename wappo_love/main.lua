@@ -276,6 +276,7 @@ function enemy_steps(level)
         enemy_step(level)
     end
 end
+
 function enemy_step(level)
     print("NEW MOVE")
     for i=1,#level.units_obj do
@@ -296,56 +297,67 @@ function enemy_step(level)
             for k, v in pairs(level.units_obj[i].ways) do ways[k] = directions[v] end
             keys = ways_to_keys(ways)
             for k, way in pairs(ways) do
-                local cell = take_element(level.floor_obj, level.units_obj[i].x+way[1], level.units_obj[i].y+way[2])
-                if cell ~= nil then
-                    print("obstacle")
-                    condition = true
-                else
-                    print("not obstacle")
-                    condition = false
-                    local cell = take_element(level.units_obj, level.units_obj[i].x+way[1]*2, level.units_obj[i].y+way[2]*2)
-                    if cell ~= nil then
-                        print("unit")
+                if way[1]~=0 and way[2]~=0 then
+                    local cells = {take_element(level.floor_obj, level.units_obj[i].x, level.units_obj[i].y+way[2]),
+                                    take_element(level.floor_obj, level.units_obj[i].x+way[1], level.units_obj[i].y),
+                                    take_element(level.floor_obj, level.units_obj[i].x+way[1]*2, level.units_obj[i].y+way[2]),
+                                    take_element(level.floor_obj, level.units_obj[i].x+way[1], level.units_obj[i].y+way[2]*2)}
+                    local cond = true
+                    for i,v in pairs(cells) do
+                        if v.index == 13 or v.index == 15 then
+                            cond = false
+                        end 
+                    end
+                    if cond == true then
                         level.moving_enemy_count = level.moving_enemy_count + 1
                         move_unit(level, way, keys[k], 'units_obj', i)
                         flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_steps(level) end)
-                        if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then
-                            break
-                        end
+                        break
+                    end
+                else
+                    local cell = take_element(level.floor_obj, level.units_obj[i].x+way[1], level.units_obj[i].y+way[2])
+                    if cell ~= nil then
+                        -- добавить условие на пробивание стен фиолетовым
+                        print("obstacle")
+                        condition = true
                     else
-                        print("not unit")
-                        -- если клетка пустая то unit туда идет
-                        print("ADDED anim position", way[1], way[2])
-                        level.moving_enemy_count = level.moving_enemy_count + 1
-                        move_unit(level, way, keys[k], 'units_obj', i)
-                        -- смотрим какие floor_obj есть на этой клетке
-                        local cell = take_element(level.floor_obj, level.units_obj[i].x, level.units_obj[i].y)
+                        print("not obstacle")
+                        condition = false
+                        local cell = take_element(level.units_obj, level.units_obj[i].x+way[1]*2, level.units_obj[i].y+way[2]*2)
                         if cell ~= nil then
-                            print(cell.index)
-                        end
-                        -- если никаких или выход то ставим обычный твининг
-                        if cell == nil or cell.index == 6 then
-                            print(level.units_obj[i].anim_x, level.units_obj[i].anim_y)
+                            print("unit")
+                            level.moving_enemy_count = level.moving_enemy_count + 1
+                            move_unit(level, way, keys[k], 'units_obj', i)
                             flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_steps(level) end)
-                            print("move ok")
-                            if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then
+                            break
+                        else
+                            print("not unit")
+                            -- если клетка пустая то unit туда идет
+                            print("ADDED anim position", way[1], way[2])
+                            level.moving_enemy_count = level.moving_enemy_count + 1
+                            move_unit(level, way, keys[k], 'units_obj', i)
+                            -- смотрим какие floor_obj есть на этой клетке
+                            local cell = take_element(level.floor_obj, level.units_obj[i].x, level.units_obj[i].y)
+                            -- если никаких или выход то ставим обычный твининг
+                            if cell == nil or cell.index == 6 then
+                                print(level.units_obj[i].anim_x, level.units_obj[i].anim_y)
+                                flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_steps(level) end)
+                                print("move ok")
                                 break
-                            end
-                        elseif cell.index == 7 then
-                            -- если там портал то ищем второй портал в массиве
-                            print("animation to portal")
-                            for j=1,#level.floor_obj do
-                                if level.floor_obj[j].index==cell.index and (level.floor_obj[j].x ~= level.units_obj[i].x or level.floor_obj[j].y ~= level.units_obj[i].y) then
-                                    -- ставим твининг на движение и функцию, которая после передвижения меняет позицию игрока на место второго портала
-                                    level.units_obj[i].steps = 0
-                                    flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.units_obj[i].x = level.floor_obj[j].x
-                                                                                                                                    level.units_obj[i].y = level.floor_obj[j].y
-                                                                                                                                    level.is_moving = false
-                                                                                                                                    enemy_steps(level) end)
-                                    break
+                            elseif cell.index == 7 then
+                                -- если там портал то ищем второй портал в массиве
+                                print("animation to portal")
+                                for j=1,#level.floor_obj do
+                                    if level.floor_obj[j].index==cell.index and (level.floor_obj[j].x ~= level.units_obj[i].x or level.floor_obj[j].y ~= level.units_obj[i].y) then
+                                        -- ставим твининг на движение и функцию, которая после передвижения меняет позицию игрока на место второго портала
+                                        level.units_obj[i].steps = 0
+                                        flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.units_obj[i].x = level.floor_obj[j].x
+                                                                                                                                        level.units_obj[i].y = level.floor_obj[j].y
+                                                                                                                                        level.is_moving = false
+                                                                                                                                        enemy_steps(level) end)
+                                        break
+                                    end
                                 end
-                            end
-                            if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then 
                                 break
                             end
                         end
