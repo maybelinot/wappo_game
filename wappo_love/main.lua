@@ -107,7 +107,7 @@ function player_move(level, key, way)
         -- анимация движения
         level.player.sprite = level.player.animations[key]
         -- твининг на движение в сторону границы и обратно
-        flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end) end)
+        flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end) end)
         print('cant move to borders')
         return
     end
@@ -116,7 +116,7 @@ function player_move(level, key, way)
     if cell ~= nil then
         -- если не nil то тоже самое что выше, анимация движения и твининг туда обратно
         level.player.sprite = level.player.animations[key]
-        flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end) end)
+        flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end) end)
         return
         print("cant move, obstacle")
     end
@@ -129,10 +129,10 @@ function player_move(level, key, way)
         local cell = take_element(level.floor_obj, level.player.x, level.player.y)
         -- если никаких или выход то ставим обычный твининг
         if cell == nil then
-            flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end)
+            flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end)
             print("move ok")
         elseif cell.index == 6 then
-            flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end)
+            flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end)
             print("WIN")
         elseif cell.index == 7 then
             -- если там портал то ищем второй портал в массиве
@@ -144,7 +144,7 @@ function player_move(level, key, way)
                     flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.is_moving = false                        
                                                                                                                     level.player.x = level.floor_obj[i].x
                                                                                                                     level.player.y = level.floor_obj[i].y
-                                                                                                                    enn(level) end)
+                                                                                                                    enemy_move(level) end)
                     break
                 end
             end
@@ -156,7 +156,7 @@ function player_move(level, key, way)
         if cell ~= nil and cell.index >=13 and cell.index <= 16 then
             -- если преграда есть, то тоже самое что в начале, ставим анимацию движения и твининг туда обратно
             level.player.sprite = level.player.animations[key]
-            flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end) end)
+            flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end) end)
             print("cant move flame to obstacle")
         else
             -- если преграды нету то смотрим что на след клетке за flame, может ли он туда двигаться
@@ -170,7 +170,7 @@ function player_move(level, key, way)
                         if level.units_obj[i].x+way[1]*2 > level.size.x or level.units_obj[i].x+way[1]*2 < 0 or level.units_obj[i].y+way[2]*2 > level.size.y or level.units_obj[i].y+way[2]*2 < 1 then
                             -- тоже что в начале, анимация и твининг туда сюда
                             level.player.sprite = level.player.animations[key]
-                            flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end) end)
+                            flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end) end)
                             print('cant move flame to borders')
                             return
                         end
@@ -184,12 +184,12 @@ function player_move(level, key, way)
                 -- после того как передвинули flame двигаем и игрока
                 move_unit(level, way, key, 'player')
                 -- твининг для игрока
-                flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end)
+                flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end)
                 print("move flame")
             else
                 -- если на клетке за flame не пусто то анимация движения и твининг туда/cюда
                 level.player.sprite = level.player.animations[key]
-                flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end) end)
+                flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end) end)
                 print("cant move flame to obj")
             end
         end
@@ -199,7 +199,7 @@ function player_move(level, key, way)
         -- двигаем игрока
         move_unit(level, way, key, 'player')
         -- ставим твининг
-        flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enn(level) end)
+        flux.to(level.player, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end)
         print("Game over")
     end
 end
@@ -232,13 +232,15 @@ function ways_to_keys(ways)
                 keys[k] = 'right'
             elseif way[2] == -1 then
                 keys[k] = 'left'
+            else
+                keys[k] = 'idle'
             end
         end
     end
     return keys 
 end
 
-function enn(level)
+function enemy_move(level)
     for i=1,#level.units_obj do
         if level.units_obj[i].index== 2 or level.units_obj[i].index== 4 then
             level.units_obj[i].steps = 2
@@ -247,15 +249,34 @@ function enn(level)
         end
     end
     level.moving_enemy_count = 1
-    enemy_step(level)
+    enemy_steps(level)
 end
-function enemy_step(level)
-    level.moving_enemy_count = level.moving_enemy_count - 1
-    if level.moving_enemy_count == 0 then
-        enemy_move(level)
+
+function is_here_violet_enemy(level)
+    for i=1,#level.units_obj do
+        for j=1,#level.units_obj do
+            print(level.units_obj[i], level.units_obj[j])
+            if level.units_obj[i] ~= level.units_obj[j] and level.units_obj[i].x == level.units_obj[j].x and level.units_obj[i].y == level.units_obj[j].y then
+                local object = get_object[3]()
+                object.x = level.units_obj[i].x
+                object.y = level.units_obj[i].y
+                table.remove(level.units_obj, j)
+                table.remove(level.units_obj, i)
+                table.insert(level.units_obj, object)
+                return
+            end
+        end
     end
 end
-function enemy_move(level)
+
+function enemy_steps(level)
+    level.moving_enemy_count = level.moving_enemy_count - 1
+    if level.moving_enemy_count == 0 then
+        is_here_violet_enemy(level)
+        enemy_step(level)
+    end
+end
+function enemy_step(level)
     print("NEW MOVE")
     for i=1,#level.units_obj do
         condition = true
@@ -281,13 +302,18 @@ function enemy_move(level)
                     condition = true
                 else
                     print("not obstacle")
+                    condition = false
                     local cell = take_element(level.units_obj, level.units_obj[i].x+way[1]*2, level.units_obj[i].y+way[2]*2)
                     if cell ~= nil then
                         print("unit")
-                        condition = true
+                        level.moving_enemy_count = level.moving_enemy_count + 1
+                        move_unit(level, way, keys[k], 'units_obj', i)
+                        flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_steps(level) end)
+                        if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then
+                            break
+                        end
                     else
                         print("not unit")
-                        condition = false
                         -- если клетка пустая то unit туда идет
                         print("ADDED anim position", way[1], way[2])
                         level.moving_enemy_count = level.moving_enemy_count + 1
@@ -300,7 +326,7 @@ function enemy_move(level)
                         -- если никаких или выход то ставим обычный твининг
                         if cell == nil or cell.index == 6 then
                             print(level.units_obj[i].anim_x, level.units_obj[i].anim_y)
-                            flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_step(level) end)
+                            flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_steps(level) end)
                             print("move ok")
                             if level.units_obj[i].index == 2 or level.units_obj[i].index == 4 then
                                 break
@@ -315,7 +341,7 @@ function enemy_move(level)
                                     flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.units_obj[i].x = level.floor_obj[j].x
                                                                                                                                     level.units_obj[i].y = level.floor_obj[j].y
                                                                                                                                     level.is_moving = false
-                                                                                                                                    enemy_step(level) end)
+                                                                                                                                    enemy_steps(level) end)
                                     break
                                 end
                             end
