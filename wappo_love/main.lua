@@ -137,7 +137,7 @@ function player_move(level, key, way)
     end
     -- записываем в cell границу/nil в стороне движения игрока
     local cell = take_element(level.floor, level.player.x+way[1], level.player.y+way[2])
-    if cell ~= nil then
+    if cell ~= nil and cell.index ~=11 and cell.index ~=12 then
         -- если не nil то тоже самое что выше, анимация движения и твининг туда обратно
         level.player.sprite = level.player.animations[key]
         flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end) end)
@@ -148,7 +148,7 @@ function player_move(level, key, way)
     if cell ~= nil then
     -- берем преграду за flame
         local cell = take_element(level.floor, level.player.x+way[1]*3, level.player.y+way[2]*3)
-        if cell ~= nil and cell.index >=13 and cell.index <= 16 then
+        if cell ~= nil and cell.index ~=11 and cell.index ~=12 then
             -- если преграда есть, то тоже самое что в начале, ставим анимацию движения и твининг туда обратно
             level.player.sprite = level.player.animations[key]
             flux.to(level.player, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () flux.to(level.player, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_move(level) end) end)
@@ -354,10 +354,17 @@ function enemy_step(level)
                 else
                     local cell = take_element(level.floor, level.enemies[i].x+way[1], level.enemies[i].y+way[2])
                     if cell ~= nil then
-                        -- добавить условие на пробивание стен фиолетовым
-                        print("obstacle")
-                        condition = true
-                    else
+                        if level.enemies[i].index==3 then
+                            if cell.index==16 then
+                                change_element(level.floor, cell.x, cell.y, get_object[11]())
+                            elseif cell.index==14 then
+                                change_element(level.floor, cell.x, cell.y, get_object[12]())
+                            end
+                        else
+                            condition = true
+                        end
+                    end
+                    if cell == nil or cell.index==11 or cell.index==12 then
                         print("not obstacle")
                         condition = false
                         local cell = take_element(level.movemable, level.enemies[i].x+way[1]*2, level.enemies[i].y+way[2]*2)
@@ -415,8 +422,8 @@ function enemy_step(level)
 end
 
 
-local level = level_load(32)
--- local level = level_load(57)
+-- local level = level_load(32)
+local level = level_load(57)
 
 function love.load()
     -- width, height = love.window.getDesktopDimensions( display )
