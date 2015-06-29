@@ -120,6 +120,20 @@ get_object[7] = function ()
     return teleport
 end
 
+get_object[11] = function ()
+    local wall = {}
+    wall.sprite = load_animation('cDHWall.png', 1, 1, 0.1)
+    wall.index = 11
+    return wall
+end
+
+get_object[12] = function ()
+    local wall = {}
+    wall.sprite = load_animation('cDVWall.png', 1, 1, 0.1)
+    wall.index = 12
+    return wall
+end
+
 get_object[13] = function ()
     local wall = {}
     wall.sprite = load_animation('vwall.png', 1, 1, 0.1)
