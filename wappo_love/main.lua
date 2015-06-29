@@ -51,6 +51,24 @@ function take_element(list, x, y)
     end
     return nil
 end
+function change_element_position(list, x, y, new_x, new_y)
+    for i=1, #list do
+        if list[i].x==x and list[i].y==y then
+            list[i].x = new_x
+            list[i].y = new_y
+        end
+    end
+end
+function change_element(list, x, y, new_element)
+    for i=1, #list do
+        if list[i].x==x and list[i].y==y then
+            local object = new_element
+            object.x = x
+            object.y = y
+            list[i] = object
+        end
+    end
+end
 
 function move_unit(level, way, key, unit, id)
     -- тут все понятно думаю, в anim_x и anim_y хранятся значения для твининга
@@ -255,7 +273,6 @@ end
 function is_here_violet_enemy(level)
     for i=1,#level.units_obj do
         for j=1,#level.units_obj do
-            print(level.units_obj[i], level.units_obj[j])
             if level.units_obj[i] ~= level.units_obj[j] and level.units_obj[i].x == level.units_obj[j].x and level.units_obj[i].y == level.units_obj[j].y then
                 local object = get_object[3]()
                 object.x = level.units_obj[i].x
@@ -294,7 +311,11 @@ function enemy_step(level)
             -- end
             local directions = {direction, {0,direction[2]}, {direction[1],0}}
             local ways = {}
-            for k, v in pairs(level.units_obj[i].ways) do ways[k] = directions[v] end
+            for k, v in pairs(level.units_obj[i].ways) do 
+                if directions[v][1]~=0 or directions[v][2]~=0 then 
+                    ways[#ways+1] = directions[v] 
+                end
+            end
             keys = ways_to_keys(ways)
             for k, way in pairs(ways) do
                 if way[1]~=0 and way[2]~=0 then
@@ -309,11 +330,19 @@ function enemy_step(level)
                         end 
                     end
                     if cond == true then
+                        for i,v in pairs(cells) do
+                            if v.index == 16 then
+                                change_element(level.floor_obj, cells[i].x, cells[i].y, get_object[11]())
+                            elseif v.index == 14 then
+                                change_element(level.floor_obj, cells[i].x, cells[i].y, get_object[12]())
+                            end
+                        end
                         level.moving_enemy_count = level.moving_enemy_count + 1
                         move_unit(level, way, keys[k], 'units_obj', i)
                         flux.to(level.units_obj[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () enemy_steps(level) end)
                         break
                     end
+                    condition = true
                 else
                     local cell = take_element(level.floor_obj, level.units_obj[i].x+way[1], level.units_obj[i].y+way[2])
                     if cell ~= nil then
