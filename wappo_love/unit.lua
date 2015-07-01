@@ -34,10 +34,18 @@ function Unit:initialize(unit_type, x, y)
         self.steps_left = 0
         self.animations.kill = load_animation(anim_letter..'kill.png', '1-3', 1, 0.1)
     end
-    self.animations.down = load_animation(anim_letter..'strip.png', 1, '1-4', 0.3)
-    self.animations.up = load_animation(anim_letter..'strip.png', 2, '1-4', 0.3)
-    self.animations.left = load_animation(anim_letter..'strip.png', 3, '1-4', 0.3)
-    self.animations.right = load_animation(anim_letter..'strip.png', 4, '1-4', 0.3)
+    -- will be rewrite when adequate sprite sheets will be added
+    if unit_type == 'player' then
+        self.animations.down = load_animation(anim_letter..'strip.png', 1, '1-4', 0.3)
+        self.animations.up = load_animation(anim_letter..'strip.png', 2, '1-4', 0.3)
+        self.animations.left = load_animation(anim_letter..'strip.png', 3, '1-4', 0.3)
+        self.animations.right = load_animation(anim_letter..'strip.png', 4, '1-4', 0.3)
+    else
+        self.animations.up = load_animation(anim_letter..'strip.png', '1-4', 1, 0.3)
+        self.animations.down = load_animation(anim_letter..'strip.png', '1-4', 2, 0.3)
+        self.animations.left = load_animation(anim_letter..'strip.png', '1-4', 3, 0.3)
+        self.animations.right = load_animation(anim_letter..'strip.png', '1-4', 4, 0.3)
+    end
     self.sprite = self.animations.down
     self.x = x
     self.y = y

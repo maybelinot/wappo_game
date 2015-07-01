@@ -7,6 +7,8 @@ function MovableObj:initialize(index, x, y)
 	-- Class represent movable objects like flames
 	-- """
 	self.index = index
+	-- will change when creation of movable objects will be through Unit class
+	self.description = 'flame' 
 	self.x = x
 	self.y = y
     self.anim_x = 0

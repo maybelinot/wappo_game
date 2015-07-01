@@ -29,7 +29,7 @@ return {
       tiles = {}
     }
   },
-  layers = {
+  layers = { 
     {
       type = "tilelayer",
       name = "Слой тайлов 1",

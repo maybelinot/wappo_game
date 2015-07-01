@@ -13,7 +13,6 @@ function love.load()
 end
 
 function love.update(dt)
-    flux.update(dt)
     level:update(dt)
 end
 

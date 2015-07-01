@@ -40,13 +40,13 @@ function FloorObj:draw()
     self.sprite:draw(self.y*tilesize[1]/2-20, self.x*tilesize[2]/2+5)
 end
 
-function FloorObj:is_permeable(x, y, unit)
-    if unit=='player' or unit=='red enemy' or unit == 'blue enemy' or unit == 'flame' then
-        if self.x==x and self.y==y and self.index >= 13 and self.index <= 16 then
+function FloorObj:is_permeable(unit, x, y)
+    if unit.description=='player' or unit.description=='red enemy' or unit.description == 'blue enemy' or unit.description == 'flame' then
+        if self.x==unit.x + x and self.y==unit.y + y and self.index >= 13 and self.index <= 16 then
             return false
         end
-    elseif unit == 'violet enemy' then
-        if self.x==x and self.y==y and (self.index == 13 or self.index == 15) then
+    elseif unit.description == 'violet enemy' then
+        if self.x==unit.x + x and self.y==unit.y + y and (self.index == 13 or self.index == 15) then
             return false
         end
     end
@@ -95,12 +95,14 @@ function Floor:add_object(index, x, y)
     table.insert(self.list, FloorObj:new(index, x, y))
 end
 
-function Floor:is_permeable(x, y, unit)
+function Floor:is_permeable(unit, x, y)
     -- """
     -- Check if unit can walk through this cell
     -- """
     for i=1,#self.list do
-        return self.list[i]:is_permeable(x, y, unit)
+        if self.list[i]:is_permeable(unit, x, y) == false then
+            return false
+        end
     end
     return true
 end

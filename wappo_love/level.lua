@@ -1,10 +1,12 @@
 local class = require 'libs/middleclass'
 require 'units'
+require 'animation'
 Enemies = require 'enemies'
 Player = require 'player'
 Floor = require 'floor'
 Movable = require 'movable'
 flux = require "libs/flux"
+
 
 local Level = class('Level')
 
@@ -77,6 +79,7 @@ function Level:draw()
 end
 
 function Level:update(dt)
+    flux.update(dt)
     self.floor:update(dt)
     self.movable:update(dt)
     self.player.sprite:update(dt)
@@ -84,8 +87,10 @@ function Level:update(dt)
 end
 
 function Level:move(way)
+    print(self.player:is_moved(), self.enemies:is_moved(), self.moved)
     if self.player:is_moved() == false then
         self.player:step_processing(way)
+        self.enemies:set_steps()
     elseif self.enemies:is_moved() == false then
         self.enemies:move()
     else

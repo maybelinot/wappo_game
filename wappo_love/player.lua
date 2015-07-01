@@ -33,13 +33,12 @@ function Player:step_processing(way)
         self:try_move(way)
         return
     end
-
-    if level.floor:is_permeable('player', self.x+way[1], self.y+way[2]) == false then
+    if level.floor:is_permeable(self, way[1], way[2]) == false then
         self:try_move(way)
         return
     end
     if level.movable:is_here(self.x+way[1]*2, self.y+way[2]*2) then
-        if level.floor:is_permeable('flame', self.x+way[1]*3, self.y+way[2]*3) == false then
+        if level.floor:is_permeable(self, way[1]*3, way[2]*3) == false then
             self:try_move(way)
             return
         else
@@ -64,7 +63,7 @@ function Player:step_processing(way)
             -- если клетка пустая то игрок туда идет
             self:move(way)
             -- смотрим какие floor есть на этой клетке
-            local cell = level.floor:get_index(self.x, self.y)
+            local index = level.floor:get_index(self.x, self.y)
             -- если никаких или выход то ставим обычный твининг
             if index == nil then
                 flux.to(self, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () self.moved = true
