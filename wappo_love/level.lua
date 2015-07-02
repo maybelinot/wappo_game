@@ -1,6 +1,7 @@
 local class = require 'libs/middleclass'
-require 'units'
+-- require 'units'
 require 'animation'
+-- Unit = require 'unit'
 Enemies = require 'enemies'
 Player = require 'player'
 Floor = require 'floor'
@@ -17,6 +18,9 @@ function Level:initialize(number)
     self.size.x = tiled_level['width']
     self.size.y = tiled_level['height']
     self.map = tiled_level['data']
+    self.tweeking_time = 0.5
+    -- self.tweeking_ease = "circinout"
+    self.tweeking_ease = "linear"
     self.moved = true
 
 

@@ -6,6 +6,8 @@ local Unit = class('Unit')
 function Unit:initialize(unit_type, x, y)
     self.animations = {}
     self.description = unit_type
+    self.animation_time = 0.3
+    -- self.animation_ease
     local anim_letter = ''
     if unit_type == 'player' then
         anim_letter = 'w'
@@ -26,25 +28,25 @@ function Unit:initialize(unit_type, x, y)
             self.index = 3
             self.ways = {1,2,3}
             anim_letter = 'p'
-            self.animations.down_right = load_animation('diag.png', '1-4', 1, 0.3)
-            self.animations.down_left = load_animation('diag.png', '1-4', 2, 0.3)
-            self.animations.up_left = load_animation('diag.png', '1-4', 3, 0.3)
-            self.animations.up_right = load_animation('diag.png', '1-4', 4, 0.3)
+            self.animations.down_right = load_animation('diag.png', '1-4', 1, self.animation_time)
+            self.animations.down_left = load_animation('diag.png', '1-4', 2, self.animation_time)
+            self.animations.up_left = load_animation('diag.png', '1-4', 3, self.animation_time)
+            self.animations.up_right = load_animation('diag.png', '1-4', 4, self.animation_time)
         end
         self.steps_left = 0
         self.animations.kill = load_animation(anim_letter..'kill.png', '1-3', 1, 0.1)
     end
     -- will be rewrite when adequate sprite sheets will be added
     if unit_type == 'player' then
-        self.animations.down = load_animation(anim_letter..'strip.png', 1, '1-4', 0.3)
-        self.animations.up = load_animation(anim_letter..'strip.png', 2, '1-4', 0.3)
-        self.animations.left = load_animation(anim_letter..'strip.png', 3, '1-4', 0.3)
-        self.animations.right = load_animation(anim_letter..'strip.png', 4, '1-4', 0.3)
+        self.animations.down = load_animation(anim_letter..'strip.png', 1, '1-4', self.animation_time)
+        self.animations.up = load_animation(anim_letter..'strip.png', 2, '1-4', self.animation_time)
+        self.animations.left = load_animation(anim_letter..'strip.png', 3, '1-4', self.animation_time)
+        self.animations.right = load_animation(anim_letter..'strip.png', 4, '1-4', self.animation_time)
     else
-        self.animations.up = load_animation(anim_letter..'strip.png', '1-4', 1, 0.3)
-        self.animations.down = load_animation(anim_letter..'strip.png', '1-4', 2, 0.3)
-        self.animations.left = load_animation(anim_letter..'strip.png', '1-4', 3, 0.3)
-        self.animations.right = load_animation(anim_letter..'strip.png', '1-4', 4, 0.3)
+        self.animations.up = load_animation(anim_letter..'strip.png', '1-4', 1, self.animation_time)
+        self.animations.down = load_animation(anim_letter..'strip.png', '1-4', 2, self.animation_time)
+        self.animations.left = load_animation(anim_letter..'strip.png', '1-4', 3, self.animation_time)
+        self.animations.right = load_animation(anim_letter..'strip.png', '1-4', 4, self.animation_time)
     end
     self.sprite = self.animations.down
     self.x = x

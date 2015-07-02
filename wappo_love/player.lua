@@ -22,8 +22,8 @@ end
 
 function Player:try_move(way)
     self.sprite = self.animations[self:get_animation_key(way)]
-    flux.to(self, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () 
-                    flux.to(self, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () 
+    flux.to(self, level.tweeking_time/2, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease(level.tweeking_ease):oncomplete(function () 
+                    flux.to(self, level.tweeking_time/2, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () 
                         self.moved = true 
                         level.enemies.moved = true 
                         level:move() end) end)
@@ -53,7 +53,7 @@ function Player:step_processing(way)
                 end
                 level.movable:move(self.x+way[1]*2, self.y+way[2]*2, way)
                 self:move(way)
-                flux.to(self, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () self.moved = true
+                flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self.moved = true
                                                                                                         level:move() end)
             else
                 self:try_move(way)
@@ -68,17 +68,17 @@ function Player:step_processing(way)
             local index = level.floor:get_index(self.x, self.y)
             -- если никаких или выход то ставим обычный твининг
             if index == nil then
-                flux.to(self, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () self.moved = true
+                flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self.moved = true
                                                                                                         level:move() end)
             elseif index == 6 then
-                flux.to(self, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () self.moved = true
+                flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self.moved = true
                                                                                                         level:move() end)
                 print("WIN")
             elseif index == 7 then
                 -- если там портал то ищем второй портал в массиве
                 print("animation to portal")
                         -- ставим твининг на движение и функцию, которая после передвижения меняет позицию игрока на место второго портала
-                flux.to(self, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.floor:teleportation(self)
+                flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () level.floor:teleportation(self)
                                                                                                         self.moved = true
                                                                                                         level:move() end)
             end
@@ -88,7 +88,7 @@ function Player:step_processing(way)
             -- двигаем игрока
             self:move(way)
             -- ставим твининг
-            flux.to(self, 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () self.moved = true
+            flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self.moved = true
                                                                                                     level:move() end)
             print("Game over")
         end

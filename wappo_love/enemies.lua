@@ -163,7 +163,7 @@ function Enemies:step_processing()
 	                    if self:is_kill(self.list[i]) then
 	                    	self.killed = true
 	                    end
-	                    flux.to(self.list[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () self:steps_processing() end)
+	                    flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
 	                    break
 	                end
 	            else
@@ -184,7 +184,7 @@ function Enemies:step_processing()
 			                    end
 	                            self.list[i]:move(way)
 	                            print(self:is_kill(self.list[i]))
-	                            flux.to(self.list[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () self:steps_processing() end)
+	                            flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
 	                            break
 	                        else
 	                            -- print("not unit")
@@ -202,7 +202,7 @@ function Enemies:step_processing()
 	                            if level.floor:get_index(self.list[i].x, self.list[i].y) == 7 then
 	                            	self.list[i].steps_left = 0
 	                            	if self:is_kill(self.list[i]) == false then
-		                                flux.to(self.list[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () level.floor:teleportation(self.list[i])
+		                                flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () level.floor:teleportation(self.list[i])
 		                                                                                                                                self:steps_processing() end)
 		                            else
 		                            	self.killed = true
@@ -210,7 +210,7 @@ function Enemies:step_processing()
 		                            end
 	                                break
 	                            else
-	                            	flux.to(self.list[i], 1.2, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () self:steps_processing() end)
+	                            	flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
 	                            	break
 	                            end
 	                        end
