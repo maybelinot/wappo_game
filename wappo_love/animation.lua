@@ -4,7 +4,7 @@ local tilesize = {40, 52}
 local image, g
 
 function load_animation(image, spritesx, spritesy, delay)
-    local animation = {}```
+    local animation = {}
     animation.image = love.graphics.newImage('sprites/'..image)
     local g = anim8.newGrid(
         tilesize[1], 

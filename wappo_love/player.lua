@@ -24,7 +24,9 @@ function Player:try_move(way)
     self.sprite = self.animations[self:get_animation_key(way)]
     flux.to(self, 0.6, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease("circinout"):oncomplete(function () 
                     flux.to(self, 0.6, { anim_x = 0, anim_y = 0 }):ease("circinout"):oncomplete(function () 
-                        self:move() end) end)
+                        self.moved = true 
+                        level.enemies.moved = true 
+                        level:move() end) end)
 end
 
 function Player:step_processing(way)

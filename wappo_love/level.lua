@@ -42,35 +42,6 @@ function Level:initialize(number)
     end
 end
 
-function take_element(list, x, y)
-    for i=1, #list do
-        if list[i].x==x and list[i].y==y then
-            return list[i]
-        end
-    end
-    return nil
-end
-
-function change_element_position(list, x, y, new_x, new_y)
-    for i=1, #list do
-        if list[i].x==x and list[i].y==y then
-            list[i].x = new_x
-            list[i].y = new_y
-        end
-    end
-end
-
-function change_element(list, x, y, new_element)
-    for i=1, #list do
-        if list[i].x==x and list[i].y==y then
-            local object = new_element
-            object.x = x
-            object.y = y
-            list[i] = object
-        end
-    end
-end
-
 function Level:draw()
     self.floor:draw()
     self.movable:draw()
@@ -90,7 +61,6 @@ function Level:move(way)
     print(self.player:is_moved(), self.enemies:is_moved(), self.moved)
     if self.player:is_moved() == false then
         self.player:step_processing(way)
-        self.enemies:set_steps()
     elseif self.enemies:is_moved() == false then
         self.enemies:move()
     else
