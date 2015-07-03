@@ -101,7 +101,6 @@ function Enemies:kills()
     end
 	self.moved = true
 	level.player.moved = true
-	level.moved = false
 end
 
 function Enemies:is_moved()
@@ -150,6 +149,8 @@ function Enemies:step_processing()
 	        for k, v in pairs(self.list[i].ways) do 
 	            if directions[v][1]~=0 or directions[v][2]~=0 then 
 	                ways[#ways+1] = directions[v] 
+	            else
+	            	self:kills()
 	            end
 	        end
 	        for k, way in pairs(ways) do

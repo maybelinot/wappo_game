@@ -88,8 +88,7 @@ function Player:step_processing(way)
             -- двигаем игрока
             self:move(way)
             -- ставим твининг
-            flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self.moved = true
-                                                                                                    level:move() end)
+            flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () new_level() end)
             print("Game over")
         end
     end
