@@ -47,7 +47,7 @@ function Player:step_processing(way)
             -- если преграды нету то смотрим что на след клетке за flame, может ли он туда двигаться
             if level.enemies:is_here(self.x+way[1]*4, self.y+way[2]*4) == false and
                 level.floor:get_index(self.x+way[1]*4, self.y+way[2]*4) ~= 5 then
-                if level:is_on_map(self.x+way[1]*4, self.y+way[2]*4) then
+                if level:is_on_map(self.x+way[1]*4, self.y+way[2]*4) == false then
                     self:try_move(way)
                     return
                 end

@@ -1,5 +1,5 @@
 local class = require 'libs/middleclass'
-
+local tilesize = {40, 52}
 local MovableObj = class('MovableObj')
 
 function MovableObj:initialize(index, x, y)
@@ -14,7 +14,7 @@ function MovableObj:initialize(index, x, y)
     self.anim_x = 0
     self.anim_y = 0
 
-	if cell == 5 then
+	if index == 5 then
 	    self.sprite = load_animation('flame.png', '1-4', 1, 0.1)
 	else
 		self = nil
@@ -87,7 +87,7 @@ end
 function Movable:move(x, y, way)
     for i=1,#self.list do
     	if self.list[i].x==x and self.list[i].y==y then
-	        self.list[i]:move()
+	        self.list[i]:move(way)
 	        flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease)
 	        return
 	    end

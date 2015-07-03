@@ -1,6 +1,6 @@
 Level = require 'level'
 -- local level = Level(32)
-level = Level(57)
+-- level = Level(57)
 
 function love.load()
     -- width, height = love.window.getDesktopDimensions( display )
@@ -19,6 +19,10 @@ end
 function love.draw()
     love.graphics.draw(background, 0, 0)
     level:draw()
+end
+
+function new_level()
+  level = Level(32)
 end
 
 function love.keypressed(key)
@@ -63,3 +67,5 @@ function love.mousepressed(x, y, button)
    --      end
    --  end
 end
+
+new_level()

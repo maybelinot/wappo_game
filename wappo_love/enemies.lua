@@ -124,6 +124,10 @@ function Enemies:check_steps()
 	if self.moving_enemy_count ~= 0 then
 		return
 	end
+	if self.killed then
+		new_level()
+		return
+	end
 	self.moved = true
 	level:move()
 end
