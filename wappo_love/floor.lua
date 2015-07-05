@@ -41,6 +41,9 @@ function FloorObj:draw()
 end
 
 function FloorObj:is_permeable(unit, x, y)
+    -- """
+    -- return permeability of wall on current x and y for given unit
+    -- """
     if unit.description=='player' or unit.description=='red enemy' or unit.description == 'blue enemy' or unit.description == 'flame' then
         if self.x==unit.x + x and self.y==unit.y + y and self.index >= 13 and self.index <= 16 then
             return false
@@ -54,6 +57,9 @@ function FloorObj:is_permeable(unit, x, y)
 end
 
 function FloorObj:crash()
+    -- """
+    -- It used for crashing walls by violet enemy
+    -- """
     if self.index == 14 then
         self.index = 12
         self.sprite = load_animation('cDVWall.png', 1, 1, 0.1)
@@ -67,6 +73,9 @@ end
 local Floor = class('Floor')
 
 function Floor:initialize()
+    -- """
+    -- Represent all floor objects on curren level
+    -- """
     self.list = {}
 end
 
@@ -108,6 +117,9 @@ function Floor:is_permeable(unit, x, y)
 end
 
 function Floor:get_index(x, y)
+    -- """
+    -- Return index of floor object on current x and y if exist one, else return nil
+    -- """
     for i=1,#self.list do
         if self.list[i].x == x and self.list[i].y == y then
             return self.list[i].index
@@ -117,6 +129,11 @@ function Floor:get_index(x, y)
 end
 
 function Floor:teleportation(unit)
+    -- """
+    -- Teleportation of given unit
+    -- If will be added different types of portals then will take one
+    -- more argument with index of portal
+    -- """
     for i=1,#self.list do
         if self.list[i].index == 7 and (self.list[i].x ~= unit.x or self.list[i].y ~= unit.y) then
             unit.x = self.list[i].x
@@ -127,6 +144,9 @@ function Floor:teleportation(unit)
 end
 
 function Floor:crash(x,y)
+    -- """
+    -- Crash wall on current x and y
+    -- """
     for i=1,#self.list do
         if self.list[i].x == x and self.list[i].y == y then
             self.list[i]:crash()

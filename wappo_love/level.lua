@@ -12,18 +12,23 @@ flux = require "libs/flux"
 local Level = class('Level')
 
 function Level:initialize(number)
+	-- """
+	-- Map and all required units loading
+	-- """
     local tiled_level = require("maps/level"..number)['layers'][1]
     local map_keys = {'player', 'red enemy', 'violet enemy', 'blue enemy', 'flame', 'exit', 'teleport', nil, nil, nil, 'wall', 'wall', 'wall', 'wall', 'wall', 'wall'}
     self.size = {}
     self.size.x = tiled_level['width']
     self.size.y = tiled_level['height']
     self.map = tiled_level['data']
+
+    -- Tweeking preferences
     self.tweeking_time = 0.5
     -- self.tweeking_ease = "circinout"
     self.tweeking_ease = "linear"
+
     self.moved = true
-
-
+    
     self.enemies = Enemies:new()
     self.floor = Floor:new()
     self.movable = Movable:new()

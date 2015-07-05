@@ -85,6 +85,9 @@ function Movable:is_here(x, y)
 end
 
 function Movable:move(x, y, way)
+	-- """
+	-- Move object on given x, y position in the given way direction
+	-- """
     for i=1,#self.list do
     	if self.list[i].x==x and self.list[i].y==y then
 	        self.list[i]:move(way)

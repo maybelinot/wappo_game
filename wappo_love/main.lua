@@ -22,10 +22,16 @@ function love.draw()
 end
 
 function new_level()
+  -- """
+  -- Start new level
+  -- """
   level = Level(32)
 end
 
 function love.keypressed(key)
+  -- """
+  -- Callback on key press
+  -- """
     if key=='w' then
         key = 'up'
         val = {-1, 0}
@@ -42,6 +48,7 @@ function love.keypressed(key)
         key = 'right'
         val = {0, 1}
     end
+    -- Will be changed when menu will be added
     if level:is_moved() == true then
         level.moved = false
         level:move(val)
@@ -49,6 +56,9 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, button)
+  -- """
+  -- Callback on mouse press
+  -- """
    -- if button == "l" then
    --      local delta_x = math.abs(x_pos-x)
    --      local delta_y = math.abs(y_pos-y)
