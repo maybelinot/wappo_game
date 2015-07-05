@@ -1,6 +1,4 @@
 Level = require 'level'
--- local level = Level(32)
--- level = Level(57)
 
 function love.load()
     -- width, height = love.window.getDesktopDimensions( display )
@@ -25,7 +23,8 @@ function new_level()
   -- """
   -- Start new level
   -- """
-  level = Level(32)
+  -- level = Level(32)
+  level = Level(57)
 end
 
 function love.keypressed(key)

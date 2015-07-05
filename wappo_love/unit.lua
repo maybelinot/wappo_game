@@ -78,13 +78,13 @@ function Unit:get_animation_key(way)
         elseif way[2] == 1 then
             return 'down_right'
         else
-            return 'up_right'
+            return 'down_left'
         end 
     elseif way[1] == -1 then
         if way[2] == 0 then
             return 'up'
         elseif way[2] == 1 then
-            return 'down_left'
+            return 'up_right'
         else
             return 'up_left'
         end
