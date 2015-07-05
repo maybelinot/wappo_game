@@ -67,7 +67,7 @@ function Level:update(dt)
 end
 
 function Level:move(way)
-    print(self.player:is_moved(), self.enemies:is_moved(), self.moved)
+    -- print(self.player:is_moved(), self.enemies:is_moved(), self.moved)
     if self.player:is_moved() == false then
         self.player:step_processing(way)
     elseif self.enemies:is_moved() == false then

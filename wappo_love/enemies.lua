@@ -75,9 +75,9 @@ function Enemies:set_steps()
 end
 
 function Enemies:move()
-    """
-    Initialization of movement for enemies
-    """
+    -- """
+    -- Initialization of movement for enemies
+    -- """
     self:set_steps()
     -- represent current number of enemies in movement
     self.moving_enemy_count = 1
@@ -165,6 +165,9 @@ end
 function Enemies:step_processing()
     -- for every enemy
     for i=1,#self.list do
+        if self:is_kill(self.list[i]) then
+            self.killed = true
+        end
         if self.list[i].steps_left>0 then
             self.list[i].steps_left = self.list[i].steps_left - 1
             -- take direction of enemy to player

@@ -4,23 +4,23 @@ local Unit = require 'unit'
 local Player = class('Player', Unit)
 
 function Player:initialize(x, y)
-    """
-    represent Player class
-    """
+    -- """
+    -- represent Player class
+    -- """
     Unit.initialize(self, 'player', x, y)
     self.moved = false
 end
 
 function Player:get_directions(x,y)
-    """
-    Return direction of given x,y coordinates to player position 
-    """
+    -- """
+    -- Return direction of given x,y coordinates to player position 
+    -- """
     local function sign(x)
-        """
-        Return sign of given x : if x > 0 then 1
-                                 if x = 0 then 0
-                                 if x < 0 then -1
-        """
+        -- """
+        -- Return sign of given x : if x > 0 then 1
+        --                          if x = 0 then 0
+        --                          if x < 0 then -1
+        -- """
       return x>0 and 1 or x<0 and -1 or 0
     end
     local direction = {sign(self.x - x), sign(self.y - y)}
@@ -28,17 +28,17 @@ function Player:get_directions(x,y)
 end
 
 function Player:is_moved()
-    """
-    Return bool is player already finished his movement
-    """
+    -- """
+    -- Return bool is player already finished his movement
+    -- """
     return self.moved
 end
 
 function Player:try_move(way)
-    """
-    Trying to move. Position is not changing.
-    Animation in the direction of prospective movement abd back. 
-    """
+    -- """
+    -- Trying to move. Position is not changing.
+    -- Animation in the direction of prospective movement abd back. 
+    -- """
     self.sprite = self.animations[self:get_animation_key(way)]
     flux.to(self, level.tweeking_time/2, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease(level.tweeking_ease):oncomplete(function () 
                     flux.to(self, level.tweeking_time/2, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () 
