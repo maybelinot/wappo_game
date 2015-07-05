@@ -1,5 +1,7 @@
 Level = require 'level'
+Editor = require 'editor'
 
+editor = Editor()
 function love.load()
     -- width, height = love.window.getDesktopDimensions( display )
     -- image = love.graphics.newImage('sprites/wicon.png')
@@ -12,11 +14,15 @@ end
 
 function love.update(dt)
     level:update(dt)
+    editor:update(dt)
 end
 
 function love.draw()
     love.graphics.draw(background, 0, 0)
     level:draw()
+
+    love.graphics.draw(background, 300, 0)
+    editor:draw()
 end
 
 function new_level()
