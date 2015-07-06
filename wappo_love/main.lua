@@ -1,5 +1,5 @@
 Level = require 'level'
-Editor = require 'editor'
+Editor = require 'editor/editor'
 
 editor = Editor()
 function love.load()

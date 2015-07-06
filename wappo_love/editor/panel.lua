@@ -1,5 +1,5 @@
 local class = require 'libs/middleclass'
-local EditorObj = require 'editor_objects'
+local EditorObj = require 'editor/objects'
 local tilesize = {40, 52}
 
 local Panel = class('Panel')
@@ -12,7 +12,9 @@ function Panel:initialize(location, position, len)
 end
 
 function Panel:add_object(unit_type, count)
-    table.insert(self.list, EditorObj:new(unit_type,count))
+    local obj = EditorObj:new(unit_type,count)
+    obj.count = count
+    table.insert(self.list, obj)
 end
 
 function Panel:get_object(x, y)

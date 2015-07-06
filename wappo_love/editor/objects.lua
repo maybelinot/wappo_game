@@ -2,8 +2,7 @@ local class = require 'libs/middleclass'
 
 EditorObj = class('EditorObj')
 
-function EditorObj:initialize(unit_type, count)
-    self.count = count
+function EditorObj:initialize(unit_type)
     self.description = unit_type
 
     local animation_time = 0.3
