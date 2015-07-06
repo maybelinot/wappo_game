@@ -60,27 +60,41 @@ function love.keypressed(key)
     end
 end
 
+-- function love.mousepressed(x, y, button)
+--   -- """
+--   -- Callback on mouse press
+--   -- """
+--    -- if button == "l" then
+--    --      local delta_x = math.abs(x_pos-x)
+--    --      local delta_y = math.abs(y_pos-y)
+--    --      if delta_x > delta_y then
+--    --          if x > x_pos then
+--    --              x_pos = x_pos + deltax
+--    --          else
+--    --              x_pos = x_pos - deltax
+--    --          end
+--    --      else            
+--    --          if y > y_pos then
+--    --              y_pos = y_pos + deltay
+--    --          else
+--    --              y_pos = y_pos - deltay
+--    --          end
+--    --      end
+--    --  end
+-- end
+
 function love.mousepressed(x, y, button)
   -- """
   -- Callback on mouse press
   -- """
-   -- if button == "l" then
-   --      local delta_x = math.abs(x_pos-x)
-   --      local delta_y = math.abs(y_pos-y)
-   --      if delta_x > delta_y then
-   --          if x > x_pos then
-   --              x_pos = x_pos + deltax
-   --          else
-   --              x_pos = x_pos - deltax
-   --          end
-   --      else            
-   --          if y > y_pos then
-   --              y_pos = y_pos + deltay
-   --          else
-   --              y_pos = y_pos - deltay
-   --          end
-   --      end
-   --  end
+    if button == "l" then
+        editor:mousepressed(x, y)
+    end
+end
+function love.mousereleased(x, y, button)
+   if button == "l" then
+      editor:mousereleased(x, y)
+   end
 end
 
 new_level()

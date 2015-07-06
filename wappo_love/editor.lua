@@ -1,13 +1,18 @@
 local class = require 'libs/middleclass'
+local tilesize = {40, 52}
 require 'animation'
 Panel = require 'panel'
--- flux = require "libs/flux"
+Cursor = require 'cursor'
 
 
 local Editor = class('Editor')
 
 function Editor:initialize()
-    self.panel = Panel:new({550, 0}, {0, 1})
+    self.location = {550, 0}
+    self.len = 6
+    self.position = {0, 1}
+    self.cursor = Cursor:new('empty')
+    self.panel = Panel:new(self.location, self.position, self.len)
     self.panel:add_object('vwall', 1)
     self.panel:add_object('hwall', 1)
     self.panel:add_object('player', 1)
@@ -24,10 +29,23 @@ end
 
 function Editor:update(dt)
     self.panel:update(dt)
+    self.cursor:update(dt)
 end
 
 function Editor:draw()
     self.panel:draw()
+    local x, y =  love.mouse.getPosition()
+    self.cursor:draw(x-tilesize[1]/2, y-tilesize[2]/2)
+end
+
+function Editor:mousepressed(x, y)
+    local obj_type = self.panel:get_object(x, y)
+    self.cursor = Cursor:new(obj_type)
+
+end
+
+function Editor:mousereleased(x,y)
+
 end
 
 
