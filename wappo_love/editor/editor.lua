@@ -39,14 +39,13 @@ function Editor:draw()
     self.panel:draw()
     self.map:draw()
     local x, y =  love.mouse.getPosition()
-    self.cursor:draw(x-tilesize[1]/2, y-tilesize[2]/2)
+    self.cursor:draw(x, y)
 end
 
 function Editor:mousepressed(x, y)
     -- print(self.cursor.description, math.ceil((x-300)/tilesize[1]*2), math.ceil((y)/tilesize[2]*2))
     local x_map =  math.ceil((x-300-tilesize[1])/tilesize[1])*2
     local y_map = math.ceil((y-tilesize[2]+5)/tilesize[2])*2
-    print(x_map, y_map)
     if self.cursor.index < 13 then
         x_map = x_map + 1
         y_map = y_map + 1
