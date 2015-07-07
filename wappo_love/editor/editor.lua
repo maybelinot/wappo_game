@@ -25,6 +25,7 @@ function Editor:initialize()
     self.panel:add_object('exit', 1)
     self.panel:add_object('teleport', 1)
     self.panel:add_object('violet enemy', 1)
+    self.panel:add_object('empty', 1)
 end
 
 
@@ -56,10 +57,13 @@ function Editor:mousepressed(x, y)
         y_map = math.ceil((y-tilesize[2]/2+5)/tilesize[2])*2
         x_map = x_map + 1
     end
-    self.map:add_object(self.cursor.description, x_map, y_map)
-    local obj_type = self.panel:get_object(x, y)
-    self.cursor = Cursor:new(obj_type)
-
+    if x_map >0 and x_map <= self.map.len and
+        y_map >0 and y_map <= self.map.len then
+        self.map:add_object(self.cursor.description, x_map, y_map)
+    else
+        local obj_type = self.panel:get_object(x, y)
+        self.cursor = Cursor:new(obj_type)
+    end
 end
 
 function Editor:mousereleased(x,y)

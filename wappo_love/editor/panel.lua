@@ -30,7 +30,8 @@ function Panel:get_object(x, y)
         self.selected.number = a+b+c+d
         return self.list[(a+b+c+d)].description
     else
-        self.selected.number = 0
+        -- if empty obj will be the last one
+        self.selected.number = #self.list
         return 'empty'
     end
 end

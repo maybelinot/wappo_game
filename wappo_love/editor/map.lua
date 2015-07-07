@@ -6,9 +6,16 @@ local Map = class('Map')
 
 function Map:initialize()
     self.list = {}
+    self.len = 11
 end
 
 function Map:add_object(unit_type, x, y)
+    for i=1,#self.list do
+        if self.list[i].x == x and self.list[i].y == y then
+            table.remove(self.list, i)
+            break
+        end
+    end
     local obj = EditorObj:new(unit_type)
     obj.x = x
     obj.y = y
