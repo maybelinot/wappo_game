@@ -1,6 +1,7 @@
 Level = require 'game/level'
 Editor = require 'editor/editor'
 
+love.filesystem.setIdentity( "wappo_game")
 editor = Editor()
 function love.load()
     -- width, height = love.window.getDesktopDimensions( display )
@@ -25,12 +26,12 @@ function love.draw()
     editor:draw()
 end
 
-function new_level()
+function new_level(num)
   -- """
   -- Start new level
   -- """
   -- level = Level(32)
-  level = Level(57)
+  level = Level(num)
 end
 
 function love.keypressed(key)
@@ -52,6 +53,14 @@ function love.keypressed(key)
     if key=='d' then
         key = 'right'
         val = {0, 1}
+    end
+    if key=='m' then
+      editor.map:save()
+      return
+    end
+    if key=='r' then
+      new_level(0)
+      return
     end
     -- Will be changed when menu will be added
     if level:is_moved() == true then
@@ -97,4 +106,4 @@ function love.mousereleased(x, y, button)
    end
 end
 
-new_level()
+new_level(57)

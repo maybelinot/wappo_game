@@ -15,12 +15,20 @@ function Level:initialize(number)
 	-- """
 	-- Map and all required units loading
 	-- """
-    local tiled_level = require("maps/level"..number)['layers'][1]
-    local map_keys = {'player', 'red enemy', 'violet enemy', 'blue enemy', 'flame', 'exit', 'teleport', nil, nil, nil, 'wall', 'wall', 'wall', 'wall', 'wall', 'wall'}
     self.size = {}
-    self.size.x = tiled_level['width']
-    self.size.y = tiled_level['height']
-    self.map = tiled_level['data']
+    if number == 0 or number == nil then
+        self.map = editor.map:read()
+        self.size.x = 11
+        self.size.y = 11
+    else
+        local tiled_level = require("maps/level"..number)['layers'][1]
+        self.size.x = tiled_level['width']
+        self.size.y = tiled_level['height']
+        self.map = tiled_level['data']
+    end
+    local map_keys = {'player', 'red enemy', 'violet enemy', 'blue enemy', 'flame', 'exit', 'teleport', nil, nil, nil, 'wall', 'wall', 'wall', 'wall', 'wall', 'wall'}
+    
+    
 
     -- Tweeking preferences
     self.tweeking_time = 0.5

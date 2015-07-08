@@ -12,7 +12,7 @@ function Panel:initialize(location, position, len)
     self.position = position
     self.selected = {}
     self.selected.sprite = love.graphics.newImage('sprites/select.png')
-    self.selected.number = 1
+    self.selected.number = 0
 end
 
 function Panel:add_object(unit_type, count)
