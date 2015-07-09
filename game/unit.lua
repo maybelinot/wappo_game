@@ -106,4 +106,11 @@ function Unit:is_here(x, y)
     return false
 end
 
+function Unit:get_description(x, y)
+    if self.x==x and self.y==y  then
+        return self.description
+    end
+    return nil
+end
+
 return Unit

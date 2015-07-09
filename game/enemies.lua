@@ -90,9 +90,21 @@ function Enemies:is_here(x, y)
     -- Check if enemy in this cell
     -- """
     for i=1,#self.list do
-        return self.list[i]:is_here(x, y)
+        if self.list[i]:is_here(x, y) then
+            return true
+        end
     end
     return false
+end
+
+function Enemies:get_description(x, y)
+    for i=1,#self.list do
+        local descr = self.list[i]:get_description(x, y)
+        if descr~= nil then
+            return descr
+        end
+    end
+    return nil
 end
 
 function Enemies:kills()
@@ -227,17 +239,24 @@ function Enemies:step_processing()
                         else
                             -- check if there is another enemy on tha way
                             -- !!!!!!! ADD CONDITION !!!!!! that enemy on the way is not violet
-                            if self:is_here(self.list[i].x+way[1]*2, self.list[i].y+way[2]*2) == true and self.list[i].description~='violet enemy' then
-                                -- increase moving_enemy_count
-                                self.moving_enemy_count = self.moving_enemy_count + 1
-                                -- if self.list[i].description=='violet enemy' then
-                                --     level.floor:crash(self.list[i].x+way[1], self.list[i].y+way[2])
-                                -- end
-                                -- move enemy
-                                self.list[i]:move(way)
-                                -- set tweeking
-                                flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
-                                break
+                            if self:is_here(self.list[i].x+way[1]*2, self.list[i].y+way[2]*2) == true then 
+                                if self.list[i].description~='violet enemy' and self:get_description(self.list[i].x+way[1]*2, self.list[i].y+way[2]*2)~='violet enemy'
+                                and self.list[i].description~= self:get_description(self.list[i].x+way[1]*2, self.list[i].y+way[2]*2) then
+                                    -- increase moving_enemy_count
+                                    self.moving_enemy_count = self.moving_enemy_count + 1
+                                    -- if self.list[i].description=='violet enemy' then
+                                    --     level.floor:crash(self.list[i].x+way[1], self.list[i].y+way[2])
+                                    -- end
+                                    -- move enemy
+                                    self.list[i]:move(way)
+                                    -- set tweeking
+                                    flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
+                                    break
+                                else
+                                    if k == #ways then
+                                        self.list[i].steps_left = 0
+                                    end
+                                end
                             else
                                 -- если клетка пустая то unit туда идет
                                 self.moving_enemy_count = self.moving_enemy_count + 1
