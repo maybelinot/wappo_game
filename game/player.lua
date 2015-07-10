@@ -71,7 +71,8 @@ function Player:step_processing(way)
         else
             -- if there is no obstacles then check if cell beyond flame is empty
             if level.enemies:is_here(self.x+way[1]*4, self.y+way[2]*4) == false and
-                level.floor:get_index(self.x+way[1]*4, self.y+way[2]*4) ~= 5 then
+                level.floor:get_index(self.x+way[1]*4, self.y+way[2]*4) ~= 5  and 
+                level.movable:is_here(self.x+way[1]*4, self.y+way[2]*4) == false then
                 -- check if cell where flame is going to move out of map dimension
                 if level:is_on_map(self.x+way[1]*4, self.y+way[2]*4) == false then
                     self:try_move(way)

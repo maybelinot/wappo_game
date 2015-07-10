@@ -199,7 +199,10 @@ function Enemies:step_processing()
                     if level.floor:is_permeable(self.list[i], 0, way[2]) and
                             level.floor:is_permeable(self.list[i], way[1], 0) and
                             level.floor:is_permeable(self.list[i], way[1]*2, way[2]) and
-                            level.floor:is_permeable(self.list[i], way[1], way[2]*2) then
+                            level.floor:is_permeable(self.list[i], way[1], way[2]*2) and
+                            level.movable:is_here(self.list[i].x,self.list[i].y + way[2]*2) == false and
+                            level.movable:is_here(self.list[i].x + way[1]*2,self.list[i].y) == false and
+                            level.movable:is_here(self.list[i].x + way[1]*4,self.list[i].y + way[2]*4) == false then
                         -- crash all walls
                         level.floor:crash(self.list[i].x, self.list[i].y+way[2])
                         level.floor:crash(self.list[i].x+way[1], self.list[i].y)

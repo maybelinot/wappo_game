@@ -79,7 +79,9 @@ function Movable:is_here(x, y)
     -- Check if movable objcect in this cell
     -- """
     for i=1,#self.list do
-        return self.list[i]:is_here(x, y)
+        if self.list[i]:is_here(x, y) then
+        	return true
+        end
     end
     return false
 end

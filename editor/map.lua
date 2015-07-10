@@ -25,14 +25,24 @@ function Map:add_object(unit_type, x, y)
 end
 
 function Map:save()
-    -- Opens a file in append mode
-    
-    -- print(io.open("../map/level0.lua", "a"))
-    love.filesystem.write( "level0.lua", "", 2)
+    local data = {}
+    for i=1, #self.list do 
+        data[self.list[i].x+(self.list[i].y-1)*self.len] = self.list[i].index
+    end
+    local data_write = ''
+    for i=1, self.len do
+        for j=1, self.len do
+            if data[j+(i-1)*self.len]~=nil then
+                data_write = data_write..tostring(data[j+(i-1)*self.len])..' '
+            else
+                data_write = data_write..'0 '
+            end
+        end
+    end
+    love.filesystem.write( "level0.lua", data_write, #data_write)
+end
 
-    -- sets the default output file as test.lua
-
-    -- appends a word test to the last line of the file
+function Map:add_level()
     local data = {}
     for i=1, #self.list do 
         data[self.list[i].x+(self.list[i].y-1)*self.len] = self.list[i].index
@@ -48,9 +58,9 @@ function Map:save()
     end
 end
 
-function Map:read()
+function Map:read(map)
     local data = {}
-    for token in love.filesystem.read( "level0.lua" ):gmatch("%w+") do
+    for token in map:gmatch("%w+") do
        table.insert(data, tonumber(token))
     end
     return data
