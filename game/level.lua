@@ -17,7 +17,7 @@ function Level:initialize(number)
 	-- """
     self.size = {}
     if number == 0 or number == nil then
-        self.map = editor.map:read(love.filesystem.read( "level0.lua" ))
+        self.map = editor.map:read()
         self.size.x = 11
         self.size.y = 11
     else

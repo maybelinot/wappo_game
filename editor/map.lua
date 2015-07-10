@@ -7,6 +7,10 @@ local Map = class('Map')
 function Map:initialize()
     self.list = {}
     self.len = 11
+    -- self.saving = 'local'
+    self.saving = 'global'
+    self.reading = 'global'
+    self.current_map = 1
 end
 
 function Map:add_object(unit_type, x, y)
@@ -24,6 +28,8 @@ function Map:add_object(unit_type, x, y)
     end
 end
 
+
+
 function Map:save()
     local data = {}
     for i=1, #self.list do 
@@ -39,28 +45,32 @@ function Map:save()
             end
         end
     end
-    love.filesystem.write( "level0.lua", data_write, #data_write)
+    if self.saving == 'local' then
+        love.filesystem.write( "level0.lua", data_write, #data_write)
+    elseif self.saving == 'global' then
+        data_write = data_write..'\n'
+        love.filesystem.append( "levels.lua", data_write, #data_write)
+    end    
 end
 
-function Map:add_level()
-    local data = {}
-    for i=1, #self.list do 
-        data[self.list[i].x+(self.list[i].y-1)*self.len] = self.list[i].index
-    end
-    for i=1, self.len do
-        for j=1, self.len do
-            if data[j+(i-1)*self.len]~=nil then
-                love.filesystem.append( "level0.lua",tostring(data[j+(i-1)*self.len])..' ', 3)
-            else
-                love.filesystem.append( "level0.lua",'0 ', 2)
-            end
-        end
+function Map:load_maps()
+    self.maps = {}
+    local s = "\n"
+    for token in love.filesystem.read( "levels.lua" ):gmatch("(.-)"..s.."()") do
+        table.insert(self.maps, token)
     end
 end
 
-function Map:read(map)
+function Map:read()
+    local tmp_map
+    if self.reading == 'local' then
+        tmp_map = love.filesystem.read( "level0.lua" )
+    elseif self.reading == 'global' then
+        tmp_map = self.maps[self.current_map]
+        self.current_map = self.current_map + 1
+    end
     local data = {}
-    for token in map:gmatch("%w+") do
+    for token in tmp_map:gmatch("%w+") do
        table.insert(data, tonumber(token))
     end
     return data

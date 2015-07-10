@@ -3,6 +3,7 @@ Editor = require 'editor/editor'
 
 love.filesystem.setIdentity( "wappo_game")
 editor = Editor()
+editor.map:load_maps()
 function love.load()
     -- width, height = love.window.getDesktopDimensions( display )
     -- image = love.graphics.newImage('sprites/wicon.png')
@@ -56,6 +57,7 @@ function love.keypressed(key)
     end
     if key=='m' then
       editor.map:save()
+      editor.map:load_maps()
       return
     end
     if key=='r' then
