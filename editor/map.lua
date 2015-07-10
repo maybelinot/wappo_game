@@ -31,32 +31,42 @@ end
 
 
 function Map:save()
-    local data = {}
-    for i=1, #self.list do 
-        data[self.list[i].x+(self.list[i].y-1)*self.len] = self.list[i].index
-    end
     local data_write = ''
-    for i=1, self.len do
-        for j=1, self.len do
-            if data[j+(i-1)*self.len]~=nil then
-                data_write = data_write..tostring(data[j+(i-1)*self.len])..' '
-            else
-                data_write = data_write..'0 '
-            end
-        end
+    for i=1, #self.list do
+        data_write = data_write..tostring(self.list[i].index)..' '..tostring(self.list[i].y-1)..' '..tostring(self.list[i].x)..' '
     end
     if self.saving == 'local' then
         love.filesystem.write( "level0.lua", data_write, #data_write)
     elseif self.saving == 'global' then
         data_write = data_write..'\n'
-        love.filesystem.append( "levels.lua", data_write, #data_write)
+        love.filesystem.append( "levels_new.lua", data_write, #data_write)
     end    
+end
+
+function Map:old_to_new()
+    for u=1, #self.maps do
+        local data_write = ''
+        local data = {}
+        local tmp = self.maps[u]
+        for token in tmp:gmatch("%w+") do
+            table.insert(data, tonumber(token))
+        end
+        for i=1, self.len do
+            for j=1, self.len do
+                if data[j+(i-1)*self.len]~=0 then
+                    data_write = data_write..tostring(data[j+(i-1)*self.len])..' '..tostring(i-1)..' '..tostring(j)..' '
+                end
+            end
+        end
+        data_write = data_write..'\n'
+        love.filesystem.append( "levels_new.lua", data_write, #data_write)
+    end   
 end
 
 function Map:load_maps()
     self.maps = {}
     local s = "\n"
-    for token in love.filesystem.read( "levels.lua" ):gmatch("(.-)"..s.."()") do
+    for token in love.filesystem.read( "levels_new.lua" ):gmatch("(.-)"..s.."()") do
         table.insert(self.maps, token)
     end
 end
@@ -66,8 +76,9 @@ function Map:read()
     if self.reading == 'local' then
         tmp_map = love.filesystem.read( "level0.lua" )
     elseif self.reading == 'global' then
-        tmp_map = self.maps[self.current_map]
-        self.current_map = self.current_map + 1
+        tmp_map = self.maps[#self.maps]
+        -- tmp_map = self.maps[self.current_map]
+        -- self.current_map = self.current_map + 1
     end
     local data = {}
     for token in tmp_map:gmatch("%w+") do

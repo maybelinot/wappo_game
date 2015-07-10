@@ -1,6 +1,6 @@
 Level = require 'game/level'
 Editor = require 'editor/editor'
-
+level_map = require 'maps/original_levels'
 love.filesystem.setIdentity( "wappo_game")
 editor = Editor()
 editor.map:load_maps()
@@ -42,26 +42,26 @@ function love.keypressed(key)
     if key=='w' then
         key = 'up'
         val = {-1, 0}
-    end
-    if key=='s' then
+    elseif key=='s' then
         key = 'down'
         val = {1, 0}
-    end
-    if key=='a' then
+    elseif key=='a' then
         key = 'left'
         val = {0, -1}
-    end
-    if key=='d' then
+    elseif key=='d' then
         key = 'right'
         val = {0, 1}
-    end
-    if key=='m' then
+    elseif key=='m' then
       editor.map:save()
       editor.map:load_maps()
       return
-    end
-    if key=='r' then
+    elseif key=='r' then
       new_level(0)
+      return
+    elseif key=='c' then
+      editor.map.list = {}
+      return
+    else
       return
     end
     -- Will be changed when menu will be added
@@ -108,4 +108,4 @@ function love.mousereleased(x, y, button)
    end
 end
 
-new_level(57)
+new_level(50)

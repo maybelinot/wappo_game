@@ -16,21 +16,15 @@ function Level:initialize(number)
 	-- Map and all required units loading
 	-- """
     self.size = {}
+    self.size.x = 11
+    self.size.y = 11
     if number == 0 or number == nil then
         self.map = editor.map:read()
-        self.size.x = 11
-        self.size.y = 11
     else
-        local tiled_level = require("maps/level"..number)['layers'][1]
-        self.size.x = tiled_level['width']
-        self.size.y = tiled_level['height']
-        self.map = tiled_level['data']
+        self.map = level_map[number]
     end
     local map_keys = {'player', 'red enemy', 'violet enemy', 'blue enemy', 'flame', 'exit', 'teleport', nil, nil, nil, 'wall', 'wall', 'wall', 'wall', 'wall', 'wall'}
-    
-    
-
-    -- Tweeking preferences
+        -- Tweeking preferences
     self.tweeking_time = 0.5
     -- self.tweeking_ease = "circinout"
     self.tweeking_ease = "linear"
@@ -41,19 +35,17 @@ function Level:initialize(number)
     self.floor = Floor:new()
     self.movable = Movable:new()
 
-    for i=0,self.size.x-1 do
-        for j=1,self.size.y do
-            local cell = self.map[i*self.size.x + j]
-            if map_keys[cell] ~= nil then
-                if map_keys[cell] == 'player' then
-                    self.player = Player:new(i, j)
-                elseif cell >= 2 and cell <= 4 then
-                    self.enemies:add_enemy(map_keys[cell], i, j)
-                elseif cell == 5 then
-                    self.movable:add_object(cell, i, j)
-                elseif map_keys[cell] == 'wall' or map_keys[cell] == 'exit' or map_keys[cell] == 'teleport' then
-                    self.floor:add_object(cell, i, j)
-                end
+    for i=1,#self.map,3 do
+        local cell = {self.map[i], self.map[i+1], self.map[i+2]}
+        if map_keys[cell[1]] ~= nil then
+            if map_keys[cell[1]] == 'player' then
+                self.player = Player:new(cell[2], cell[3])
+            elseif cell[1] >= 2 and cell[1] <= 4 then
+                self.enemies:add_enemy(map_keys[cell[1]], cell[2], cell[3])
+            elseif cell[1] == 5 then
+                self.movable:add_object(cell[1], cell[2], cell[3])
+            elseif map_keys[cell[1]] == 'wall' or map_keys[cell[1]] == 'exit' or map_keys[cell[1]] == 'teleport' then
+                self.floor:add_object(cell[1], cell[2], cell[3])
             end
         end
     end
