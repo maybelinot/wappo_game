@@ -4,12 +4,14 @@ level_map = require 'maps/original_levels'
 love.filesystem.setIdentity( "wappo_game")
 editor = Editor()
 editor.map:load_maps()
+map_number = 0
 function love.load()
     -- width, height = love.window.getDesktopDimensions( display )
     -- image = love.graphics.newImage('sprites/wicon.png')
     background = love.graphics.newImage('sprites/bggame.png')
 
     song1 = love.audio.newSource("audio/wappo2.ogg", "static")
+    
     -- song1:setVolume(0.3)
     -- song1:play()
 end
@@ -27,12 +29,23 @@ function love.draw()
     editor:draw()
 end
 
-function new_level(num)
+function next_level()
   -- """
   -- Start new level
   -- """
   -- level = Level(32)
-  level = Level(num)
+  if map_number < #level_map then
+    map_number = map_number +1
+  end
+  level = Level()
+end
+
+function restart_level()
+  -- """
+  -- Start new level
+  -- """
+  -- level = Level(32)
+  level = Level()
 end
 
 function love.keypressed(key)
@@ -108,4 +121,4 @@ function love.mousereleased(x, y, button)
    end
 end
 
-new_level(50)
+next_level()

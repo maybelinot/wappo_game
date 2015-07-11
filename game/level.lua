@@ -11,18 +11,14 @@ flux = require "libs/flux"
 
 local Level = class('Level')
 
-function Level:initialize(number)
+function Level:initialize()
 	-- """
 	-- Map and all required units loading
 	-- """
     self.size = {}
     self.size.x = 11
     self.size.y = 11
-    if number == 0 or number == nil then
-        self.map = editor.map:read()
-    else
-        self.map = level_map[number]
-    end
+    self.map = level_map[map_number]
     local map_keys = {'player', 'red enemy', 'violet enemy', 'blue enemy', 'flame', 'exit', 'teleport', nil, nil, nil, 'wall', 'wall', 'wall', 'wall', 'wall', 'wall'}
         -- Tweeking preferences
     self.tweeking_time = 0.5

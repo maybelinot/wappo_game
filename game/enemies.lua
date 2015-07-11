@@ -111,7 +111,6 @@ function Enemies:kills()
     -- """
     -- Enemies kills player
     -- """
-    print('you was killed')
     for i=1,#self.list do
         self.list[i].steps_left = 0
         self.list[i].animation = self.list[i].animations.kill
@@ -155,7 +154,7 @@ function Enemies:check_steps()
     end
     -- if player was killed 
     if self.killed then
-        new_level()
+        restart_level()
         return
     end
     self.moved = true
@@ -200,9 +199,7 @@ function Enemies:step_processing()
                             level.floor:is_permeable(self.list[i], way[1], 0) and
                             level.floor:is_permeable(self.list[i], way[1]*2, way[2]) and
                             level.floor:is_permeable(self.list[i], way[1], way[2]*2) and
-                            level.movable:is_here(self.list[i].x,self.list[i].y + way[2]*2) == false and
-                            level.movable:is_here(self.list[i].x + way[1]*2,self.list[i].y) == false and
-                            level.movable:is_here(self.list[i].x + way[1]*4,self.list[i].y + way[2]*4) == false then
+                            level.movable:is_here(self.list[i].x + way[1]*2,self.list[i].y + way[2]*2) == false then
                         -- crash all walls
                         level.floor:crash(self.list[i].x, self.list[i].y+way[2])
                         level.floor:crash(self.list[i].x+way[1], self.list[i].y)
@@ -218,9 +215,24 @@ function Enemies:step_processing()
                             self.killed = true
                         end
                         -- tweeking
-                        flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
-                        -- he finished his step, so we'll break ways loop
-                        break
+                        if level.floor:get_index(self.list[i].x, self.list[i].y) == 7 then
+                            -- if there is portal
+                            -- enemies don't have steps after teleportation
+                            self.list[i].steps_left = 0
+                            if self:is_kill(self.list[i]) == false then
+                                flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () level.floor:teleportation(self.list[i])
+                                                                                                                                                        self:steps_processing() end)
+                                break
+                            else
+                                flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
+                                self.killed = true
+                                break
+                            end
+                            break
+                        else
+                            flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
+                            break
+                        end
                     end
                 -- if it's not diagonal way
                 else

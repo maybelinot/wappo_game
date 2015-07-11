@@ -71,7 +71,7 @@ function Player:step_processing(way)
         else
             -- if there is no obstacles then check if cell beyond flame is empty
             if level.enemies:is_here(self.x+way[1]*4, self.y+way[2]*4) == false and
-                level.floor:get_index(self.x+way[1]*4, self.y+way[2]*4) ~= 5  and 
+                level.floor:get_index(self.x+way[1]*4, self.y+way[2]*4) ~= 7  and 
                 level.movable:is_here(self.x+way[1]*4, self.y+way[2]*4) == false then
                 -- check if cell where flame is going to move out of map dimension
                 if level:is_on_map(self.x+way[1]*4, self.y+way[2]*4) == false then
@@ -101,9 +101,7 @@ function Player:step_processing(way)
                 flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self.moved = true
                                                                                                         level:move() end)
             elseif index == 6 then
-                flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self.moved = true
-                                                                                                        level:move() end)
-                print("WIN")
+                flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () next_level() end)
             elseif index == 7 then
                 flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () level.floor:teleportation(self)
                                                                                                         self.moved = true
@@ -115,7 +113,7 @@ function Player:step_processing(way)
             -- двигаем игрока
             self:move(way)
             -- ставим твининг
-            flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () new_level() end)
+            flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () restart_level() end)
             print("Game over")
         end
     end
