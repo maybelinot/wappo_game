@@ -83,8 +83,12 @@ function Player:step_processing(way)
                 -- move player
                 self:move(way)
                 -- set tweeking to player movement
-                flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self.moved = true
-                                                                                                        level:move() end)
+                if level.floor:get_index(self.x, self.y) == 6 then 
+                    flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () next_level() end)
+                else
+                    flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self.moved = true
+                                                                                                            level:move() end)
+                end
             else
                 self:try_move(way)
             end
