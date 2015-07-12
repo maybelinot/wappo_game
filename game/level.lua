@@ -1,4 +1,4 @@
-local class = require 'libs/middleclass'
+-- local class = require 'libs/middleclass'
 -- require 'units'
 require 'animation'
 -- Unit = require 'unit'
@@ -8,31 +8,60 @@ Floor = require 'game/floor'
 Movable = require 'game/movable'
 flux = require "libs/flux"
 
+local Level = Game:addState('Level')
 
-local Level = class('Level')
-
-function Level:initialize()
+function Level:load_level(number, level_relation)
 	-- """
 	-- Map and all required units loading
 	-- """
+    if level_relation == 'Campaign' then
+        self.level_map = require 'maps/original_levels'
+        print(#self.level_map)
+    elseif level_relation == 'Own level' then
+        self:load_maps()
+    end
+    if number <1 or number > #self.level_map then
+        self.current_map = #self.level_map
+    else
+        self.current_map = number
+    end
     self.size = {}
     self.size.x = 11
     self.size.y = 11
-    self.map = level_map[map_number]
-    local map_keys = {'player', 'red enemy', 'violet enemy', 'blue enemy', 'flame', 'exit', 'teleport', nil, nil, nil, 'wall', 'wall', 'wall', 'wall', 'wall', 'wall'}
         -- Tweeking preferences
     self.tweeking_time = 0.5
     -- self.tweeking_ease = "circinout"
     self.tweeking_ease = "linear"
+    self:load()
+end
 
+function Level:draw()
+    love.graphics.draw(background, 0, 0)
+    self.floor:draw()
+    self.movable:draw()
+    self.player:draw()
+    self.enemies:draw()
+end
+
+function Level:update(dt)
+    flux.update(dt)
+    self.floor:update(dt)
+    self.movable:update(dt)
+    self.player.sprite:update(dt)
+    self.enemies:update(dt)
+end
+
+function Level:load()
+    local map = self.level_map[self.current_map]
+    local map_keys = {'player', 'red enemy', 'violet enemy', 'blue enemy', 'flame', 'exit', 'teleport', nil, nil, nil, 'wall', 'wall', 'wall', 'wall', 'wall', 'wall'}
     self.moved = true
     
     self.enemies = Enemies:new()
     self.floor = Floor:new()
     self.movable = Movable:new()
 
-    for i=1,#self.map,3 do
-        local cell = {self.map[i], self.map[i+1], self.map[i+2]}
+    for i=1,#map,3 do
+        local cell = {map[i], map[i+1], map[i+2]}
         if map_keys[cell[1]] ~= nil then
             if map_keys[cell[1]] == 'player' then
                 self.player = Player:new(cell[2], cell[3])
@@ -47,19 +76,23 @@ function Level:initialize()
     end
 end
 
-function Level:draw()
-    self.floor:draw()
-    self.movable:draw()
-    self.player:draw()
-    self.enemies:draw()
+function Level:next()
+  -- """
+  -- Start new level
+  -- """
+  -- level = Level(32)
+    if self.current_map < #self.level_map then
+        self.current_map = self.current_map +1
+    end
+    self:load()
 end
 
-function Level:update(dt)
-    flux.update(dt)
-    self.floor:update(dt)
-    self.movable:update(dt)
-    self.player.sprite:update(dt)
-    self.enemies:update(dt)
+function Level:restart()
+  -- """
+  -- Start new level
+  -- """
+  -- level = Level(32)
+    self:load()
 end
 
 function Level:move(way)
@@ -86,4 +119,51 @@ function Level:is_on_map(x, y)
     return true
 end
 
-return Level
+function Level:load_maps()
+    self.level_map = {}
+    local s = "\n"
+    for token in love.filesystem.read( "levels_new.lua" ):gmatch("(.-)"..s.."()") do
+        table.insert(self.level_map, self:read(token))
+    end
+end
+
+function Level:read(map)
+    local data = {}
+    for token in map:gmatch("%w+") do
+       table.insert(data, tonumber(token))
+    end
+    return data
+end
+
+function Level:keypressed(key)
+    -- """
+    -- Callback on key press
+    -- """
+    if key=='w' then
+        key = 'up'
+        val = {-1, 0}
+    elseif key=='s' then
+        key = 'down'
+        val = {1, 0}
+    elseif key=='a' then
+        key = 'left'
+        val = {0, -1}
+    elseif key=='d' then
+        key = 'right'
+        val = {0, 1}
+    elseif key == 'escape' then
+        self:gotoState('Menu')
+        self:load_menu()
+        return
+    else
+      return
+    end
+    -- Will be changed when menu will be added
+    if self:is_moved() == true then
+        self.moved = false
+        self:move(val)
+    end
+end
+
+function Level:mousereleased(x, y)
+end

@@ -116,7 +116,7 @@ function Enemies:kills()
         self.list[i].animation = self.list[i].animations.kill
     end
     self.moved = true
-    level.player.moved = true
+    game.player.moved = true
 end
 
 function Enemies:is_moved()
@@ -130,7 +130,7 @@ function Enemies:is_kill(unit)
     -- """
     -- Check if current unit is on the same position as player
     -- """
-    if level.player:is_here(unit.x, unit.y) == true then
+    if game.player:is_here(unit.x, unit.y) == true then
         return true
     end
     return false
@@ -141,7 +141,7 @@ function Enemies:check_steps()
     -- Check step completion
     -- """
     -- This function is run only if Enemy on curent step was in idle
-    -- So the same thing will be on the next step, to prevent this we call level:move()
+    -- So the same thing will be on the next step, to prevent this we call game:move()
     -- If all objects have exhausted their steps 
     for i=1,#self.list do
         if self.list[i].steps_left ~= 0 then
@@ -154,11 +154,11 @@ function Enemies:check_steps()
     end
     -- if player was killed 
     if self.killed then
-        restart_level()
+        game:restart()
         return
     end
     self.moved = true
-    level:move()
+    game:move()
 end
 
 function Enemies:steps_processing()
@@ -182,7 +182,7 @@ function Enemies:step_processing()
         if self.list[i].steps_left>0 then
             self.list[i].steps_left = self.list[i].steps_left - 1
             -- take direction of enemy to player
-            local directions = level.player:get_directions(self.list[i].x, self.list[i].y)
+            local directions = game.player:get_directions(self.list[i].x, self.list[i].y)
             local ways = {}
             -- EnemyObj.ways represent possible ways to move and order, for example: horizontal, vertical
             for k, v in pairs(self.list[i].ways) do 
@@ -195,16 +195,16 @@ function Enemies:step_processing()
                 -- if way to move is diagonal then
                 if way[1]~=0 and way[2]~=0 then
                     -- check all walls/obstacles on this way
-                    if level.floor:is_permeable(self.list[i], 0, way[2]) and
-                            level.floor:is_permeable(self.list[i], way[1], 0) and
-                            level.floor:is_permeable(self.list[i], way[1]*2, way[2]) and
-                            level.floor:is_permeable(self.list[i], way[1], way[2]*2) and
-                            level.movable:is_here(self.list[i].x + way[1]*2,self.list[i].y + way[2]*2) == false then
+                    if game.floor:is_permeable(self.list[i], 0, way[2]) and
+                            game.floor:is_permeable(self.list[i], way[1], 0) and
+                            game.floor:is_permeable(self.list[i], way[1]*2, way[2]) and
+                            game.floor:is_permeable(self.list[i], way[1], way[2]*2) and
+                            game.movable:is_here(self.list[i].x + way[1]*2,self.list[i].y + way[2]*2) == false then
                         -- crash all walls
-                        level.floor:crash(self.list[i].x, self.list[i].y+way[2])
-                        level.floor:crash(self.list[i].x+way[1], self.list[i].y)
-                        level.floor:crash(self.list[i].x+way[1]*2, self.list[i].y+way[2])
-                        level.floor:crash(self.list[i].x+way[1], self.list[i].y+way[2]*2)
+                        game.floor:crash(self.list[i].x, self.list[i].y+way[2])
+                        game.floor:crash(self.list[i].x+way[1], self.list[i].y)
+                        game.floor:crash(self.list[i].x+way[1]*2, self.list[i].y+way[2])
+                        game.floor:crash(self.list[i].x+way[1], self.list[i].y+way[2]*2)
                         -- increase moving_enemy_count (it will be decreased after flux will be complete)
                         -- steps_processing works only when all tweeking are complete
                         self.moving_enemy_count = self.moving_enemy_count + 1
@@ -215,29 +215,29 @@ function Enemies:step_processing()
                             self.killed = true
                         end
                         -- tweeking
-                        if level.floor:get_index(self.list[i].x, self.list[i].y) == 7 then
+                        if game.floor:get_index(self.list[i].x, self.list[i].y) == 7 then
                             -- if there is portal
                             -- enemies don't have steps after teleportation
                             self.list[i].steps_left = 0
                             if self:is_kill(self.list[i]) == false then
-                                flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () level.floor:teleportation(self.list[i])
+                                flux.to(self.list[i], game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () game.floor:teleportation(self.list[i])
                                                                                                                                                         self:steps_processing() end)
                                 break
                             else
-                                flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
+                                flux.to(self.list[i], game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () self:steps_processing() end)
                                 self.killed = true
                                 break
                             end
                             break
                         else
-                            flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
+                            flux.to(self.list[i], game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () self:steps_processing() end)
                             break
                         end
                     end
                 -- if it's not diagonal way
                 else
                     -- check if there is no obstacles on way
-                    if level.floor:is_permeable(self.list[i], way[1], way[2]) == false then
+                    if game.floor:is_permeable(self.list[i], way[1], way[2]) == false then
                         -- if it's the last possible way to move and he can't move we'll set his steps on 0 to prevent repeating for all steps
                         -- !!!!!! SHOULD BE CHANGED !!!!!! if we'll have more enemies and will be exist chance that violet enemy break obstacles 
                         -- and blue one on his second step will get opportunity to move
@@ -247,7 +247,7 @@ function Enemies:step_processing()
                     -- if there is no obstacles
                     else
                         -- check if there is flame
-                        if level.movable:is_here(self.list[i].x+way[1]*2, self.list[i].y+way[2]*2) == true then
+                        if game.movable:is_here(self.list[i].x+way[1]*2, self.list[i].y+way[2]*2) == true then
                             if k == #ways then
                                 self.list[i].steps_left = 0
                             end
@@ -260,12 +260,12 @@ function Enemies:step_processing()
                                     -- increase moving_enemy_count
                                     self.moving_enemy_count = self.moving_enemy_count + 1
                                     -- if self.list[i].description=='violet enemy' then
-                                    --     level.floor:crash(self.list[i].x+way[1], self.list[i].y+way[2])
+                                    --     game.floor:crash(self.list[i].x+way[1], self.list[i].y+way[2])
                                     -- end
                                     -- move enemy
                                     self.list[i]:move(way)
                                     -- set tweeking
-                                    flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
+                                    flux.to(self.list[i], game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () self:steps_processing() end)
                                     break
                                 else
                                     if k == #ways then
@@ -276,7 +276,7 @@ function Enemies:step_processing()
                                 -- если клетка пустая то unit туда идет
                                 self.moving_enemy_count = self.moving_enemy_count + 1
                                 if self.list[i].description=='violet enemy' then
-                                    level.floor:crash(self.list[i].x+way[1], self.list[i].y+way[2])
+                                    game.floor:crash(self.list[i].x+way[1], self.list[i].y+way[2])
                                 end
                                 -- move enemy
                                 self.list[i]:move(way)
@@ -285,22 +285,22 @@ function Enemies:step_processing()
                                 end
                                 -- смотрим какие floor есть на этой клетке
                                 -- если никаких или выход то ставим обычный твининг
-                                if level.floor:get_index(self.list[i].x, self.list[i].y) == 7 then
+                                if game.floor:get_index(self.list[i].x, self.list[i].y) == 7 then
                                     -- if there is portal
                                     -- enemies don't have steps after teleportation
                                     self.list[i].steps_left = 0
                                     if self:is_kill(self.list[i]) == false then
-                                        flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () level.floor:teleportation(self.list[i])
+                                        flux.to(self.list[i], game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () game.floor:teleportation(self.list[i])
                                                                                                                                                                 self:steps_processing() end)
                                         break
                                     else
-                                        flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
+                                        flux.to(self.list[i], game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () self:steps_processing() end)
                                         self.killed = true
                                         break
                                     end
                                     break
                                 else
-                                    flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self:steps_processing() end)
+                                    flux.to(self.list[i], game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () self:steps_processing() end)
                                     break
                                 end
                             end

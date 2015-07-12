@@ -25,7 +25,7 @@ end
 
 function Select:draw()
     for i=1, #self.list do
-        self.list[i]:draw(300 + (self.list[i].x-1)*tilesize[1]/2, (self.list[i].y-1)*tilesize[2]/2+5)
+        self.list[i]:draw((self.list[i].x-1)*tilesize[1]/2, (self.list[i].y-1)*tilesize[2]/2+5)
     end
 end
 

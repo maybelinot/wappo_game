@@ -93,7 +93,7 @@ function Movable:move(x, y, way)
     for i=1,#self.list do
     	if self.list[i].x==x and self.list[i].y==y then
 	        self.list[i]:move(way)
-	        flux.to(self.list[i], level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease)
+	        flux.to(self.list[i], game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease)
 	        return
 	    end
     end

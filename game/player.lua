@@ -40,11 +40,11 @@ function Player:try_move(way)
     -- Animation in the direction of prospective movement abd back. 
     -- """
     self.sprite = self.animations[self:get_animation_key(way)]
-    flux.to(self, level.tweeking_time/2, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease(level.tweeking_ease):oncomplete(function () 
-                    flux.to(self, level.tweeking_time/2, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () 
+    flux.to(self, game.tweeking_time/2, { anim_x = way[1]*15, anim_y = way[2]*10 }):ease(game.tweeking_ease):oncomplete(function () 
+                    flux.to(self, game.tweeking_time/2, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () 
                         self.moved = true 
-                        level.enemies.moved = true 
-                        level:move() end) end)
+                        game.enemies.moved = true 
+                        game:move() end) end)
 end
 
 function Player:step_processing(way)
@@ -53,41 +53,41 @@ function Player:step_processing(way)
     -- """
 
     -- check if cell where player is going to move out of map dimension
-    if level:is_on_map(self.x+way[1]*2, self.y+way[2]*2) == false then
+    if game:is_on_map(self.x+way[1]*2, self.y+way[2]*2) == false then
         self:try_move(way)
         return
     end
     -- check if there is obstacle on the way
-    if level.floor:is_permeable(self, way[1], way[2]) == false then
+    if game.floor:is_permeable(self, way[1], way[2]) == false then
         self:try_move(way)
         return
     end
     -- check if there flame object on the way
-    if level.movable:is_here(self.x+way[1]*2, self.y+way[2]*2) then
+    if game.movable:is_here(self.x+way[1]*2, self.y+way[2]*2) then
         -- check if there is obstacle on the way of flame object movement
-        if level.floor:is_permeable(self, way[1]*3, way[2]*3) == false then
+        if game.floor:is_permeable(self, way[1]*3, way[2]*3) == false then
             self:try_move(way)
             return
         else
             -- if there is no obstacles then check if cell beyond flame is empty
-            if level.enemies:is_here(self.x+way[1]*4, self.y+way[2]*4) == false and
-                level.floor:get_index(self.x+way[1]*4, self.y+way[2]*4) ~= 7  and 
-                level.movable:is_here(self.x+way[1]*4, self.y+way[2]*4) == false then
+            if game.enemies:is_here(self.x+way[1]*4, self.y+way[2]*4) == false and
+                game.floor:get_index(self.x+way[1]*4, self.y+way[2]*4) ~= 7  and 
+                game.movable:is_here(self.x+way[1]*4, self.y+way[2]*4) == false then
                 -- check if cell where flame is going to move out of map dimension
-                if level:is_on_map(self.x+way[1]*4, self.y+way[2]*4) == false then
+                if game:is_on_map(self.x+way[1]*4, self.y+way[2]*4) == false then
                     self:try_move(way)
                     return
                 end
                 -- move flame
-                level.movable:move(self.x+way[1]*2, self.y+way[2]*2, way)
+                game.movable:move(self.x+way[1]*2, self.y+way[2]*2, way)
                 -- move player
                 self:move(way)
                 -- set tweeking to player movement
-                if level.floor:get_index(self.x, self.y) == 6 then 
-                    flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () next_level() end)
+                if game.floor:get_index(self.x, self.y) == 6 then 
+                    flux.to(self, game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () game:next() end)
                 else
-                    flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self.moved = true
-                                                                                                            level:move() end)
+                    flux.to(self, game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () self.moved = true
+                                                                                                            game:move() end)
                 end
             else
                 self:try_move(way)
@@ -95,29 +95,29 @@ function Player:step_processing(way)
         end
     else
         -- записываем в cell unit из клетки в стороне движения игрока
-        if level.enemies:is_here(self.x+way[1]*2, self.y+way[2]*2) == false then
+        if game.enemies:is_here(self.x+way[1]*2, self.y+way[2]*2) == false then
             -- если клетка пустая то игрок туда идет
             self:move(way)
             -- смотрим какие floor есть на этой клетке
-            local index = level.floor:get_index(self.x, self.y)
+            local index = game.floor:get_index(self.x, self.y)
             -- если никаких или выход то ставим обычный твининг
             if index == nil then
-                flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () self.moved = true
-                                                                                                        level:move() end)
+                flux.to(self, game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () self.moved = true
+                                                                                                        game:move() end)
             elseif index == 6 then
-                flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () next_level() end)
+                flux.to(self, game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () game:next() end)
             elseif index == 7 then
-                flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () level.floor:teleportation(self)
+                flux.to(self, game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () game.floor:teleportation(self)
                                                                                                         self.moved = true
-                                                                                                        level:move() end)
+                                                                                                        game:move() end)
             end
         else
             -- если там enemy, ставим анимацию kill
-            level.enemies:kills()
+            game.enemies:kills()
             -- двигаем игрока
             self:move(way)
             -- ставим твининг
-            flux.to(self, level.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(level.tweeking_ease):oncomplete(function () restart_level() end)
+            flux.to(self, game.tweeking_time, { anim_x = 0, anim_y = 0 }):ease(game.tweeking_ease):oncomplete(function () game:restart() end)
             print("Game over")
         end
     end

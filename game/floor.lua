@@ -74,7 +74,7 @@ local Floor = class('Floor')
 
 function Floor:initialize()
     -- """
-    -- Represent all floor objects on curren level
+    -- Represent all floor objects on curren game
     -- """
     self.list = {}
 end

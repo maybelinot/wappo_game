@@ -35,33 +35,20 @@ function Map:save()
     for i=1, #self.list do
         data_write = data_write..tostring(self.list[i].index)..' '..tostring(self.list[i].y-1)..' '..tostring(self.list[i].x)..' '
     end
-    if self.saving == 'local' then
-        love.filesystem.write( "level0.lua", data_write, #data_write)
-    elseif self.saving == 'global' then
-        data_write = data_write..'\n'
-        love.filesystem.append( "levels_new.lua", data_write, #data_write)
-    end    
+    data_write = data_write..'\n'
+    love.filesystem.append( "levels_new.lua", data_write, #data_write)
 end
 
-function Map:old_to_new()
-    for u=1, #self.maps do
-        local data_write = ''
-        local data = {}
-        local tmp = self.maps[u]
-        for token in tmp:gmatch("%w+") do
-            table.insert(data, tonumber(token))
+function Map:is_ok()
+    local cond = false
+    for i=1, #self.list do
+        if self.list[i].index == 1 then
+            cond = true
         end
-        for i=1, self.len do
-            for j=1, self.len do
-                if data[j+(i-1)*self.len]~=0 then
-                    data_write = data_write..tostring(data[j+(i-1)*self.len])..' '..tostring(i-1)..' '..tostring(j)..' '
-                end
-            end
-        end
-        data_write = data_write..'\n'
-        love.filesystem.append( "levels_new.lua", data_write, #data_write)
-    end   
+    end
+    return cond
 end
+
 
 function Map:load_maps()
     self.maps = {}
@@ -95,7 +82,7 @@ end
 
 function Map:draw()
     for i=1, #self.list do
-        self.list[i]:draw(300 + (self.list[i].x-1)*tilesize[1]/2, (self.list[i].y-1)*tilesize[2]/2+5)
+        self.list[i]:draw((self.list[i].x-1)*tilesize[1]/2, (self.list[i].y-1)*tilesize[2]/2+5)
     end
 end
 

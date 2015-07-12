@@ -1,17 +1,17 @@
 local class = require 'libs/middleclass'
 local tilesize = {40, 52}
 require 'animation'
-Panel = require 'editor/panel'
+local Panel = require 'editor/panel'
 Cursor = require 'editor/cursor'
 Map = require 'editor/map'
 
-local Editor = class('Editor')
+local Editor = Game:addState('Editor')
 
-function Editor:initialize()
+function Editor:load_editor()
     self.map = Map:new()
-    self.location = {550, 0}
+    self.location = {0, 320}
     self.len = 6
-    self.position = {0, 1}
+    self.position = {1, 0}
     self.cursor = Cursor:new('empty')
     self.panel = Panel:new(self.location, self.position, self.len)
     self.panel:add_object('vwall', 1)
@@ -36,6 +36,7 @@ function Editor:update(dt)
 end
 
 function Editor:draw()
+	love.graphics.draw(background, 0, 0)
     self.panel:draw()
     self.map:draw()
     local x, y =  love.mouse.getPosition()
@@ -44,13 +45,13 @@ end
 
 function Editor:mousepressed(x, y)
     -- print(self.cursor.description, math.ceil((x-300)/tilesize[1]*2), math.ceil((y)/tilesize[2]*2))
-    local x_map =  math.ceil((x-300-tilesize[1])/tilesize[1])*2
+    local x_map =  math.ceil((x-tilesize[1])/tilesize[1])*2
     local y_map = math.ceil((y-tilesize[2]+5)/tilesize[2])*2
     if self.cursor.index < 13 then
         x_map = x_map + 1
         y_map = y_map + 1
     elseif self.cursor.index <=14 then
-        x_map =  math.ceil((x-300-tilesize[1]/2)/tilesize[1])*2
+        x_map =  math.ceil((x-tilesize[1]/2)/tilesize[1])*2
         y_map = y_map + 1
     else
         y_map = math.ceil((y-tilesize[2]/2+5)/tilesize[2])*2
@@ -69,5 +70,30 @@ function Editor:mousereleased(x,y)
 
 end
 
+function Editor:keypressed(key)
+    -- """
+    -- Callback on key press
+    -- """
+    if key=='return' then
+    	if self.map:is_ok() then
+	    	self.map:save()
+	    	self.map:load_maps()
+	    	self:gotoState('Level') 
+	    	self:load_level(0, 'Own level')
+	    else
+	    	print('You need player on you level')
+	    end
+    	return
+    elseif key=='c' then
+    	self.map.list = {}
+    	return
+    elseif key == 'escape' then
+        self:gotoState('Level')
+        self:load_level(1)
+    else
+    	return
+    end
+end
 
-return Editor
+
+-- return Editor
