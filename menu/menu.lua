@@ -14,6 +14,7 @@ local Menu = Game:addState('Menu')
 -- Menu.static.sprite = love.graphics.newImage('sprites/bgmenu.png')
 function Menu:load_menu()
     self.sprite = love.graphics.newImage('sprites/bgmenu.png')
+    self.ad = love.graphics.newImage('sprites/advert.png')
     self.panel = Panel({20, 110, 200, 200}, 40)
     self.panel:add_button('Campaign', function () self:gotoState('Level') self:load_level(1, 'Campaign') end)
     self.panel:add_button('Own level', function () self:gotoState('Editor') self:load_editor() end)
@@ -22,6 +23,7 @@ end
 
 function Menu:draw()
     love.graphics.draw(self.sprite, 0, 0)
+    love.graphics.draw(self.ad, 0, 320)
     self.panel:draw()
 end
 
