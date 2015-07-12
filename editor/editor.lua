@@ -88,8 +88,8 @@ function Editor:keypressed(key)
     	self.map.list = {}
     	return
     elseif key == 'escape' then
-        self:gotoState('Level')
-        self:load_level(1)
+        self:gotoState('Menu')
+        self:load_menu()
     else
     	return
     end

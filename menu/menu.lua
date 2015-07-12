@@ -33,16 +33,6 @@ function Menu:keypressed(key)
     -- """
     -- Callback on key press
     -- """
-    if key == 'escape' then
-        self:gotoState('Level')
-    else
-      return
-    end
-    -- Will be changed when menu will be added
-    if self:is_moved() == true then
-        self.moved = false
-        self:move(val)
-    end
 end
 
 function Menu:mousepressed(x, y)
