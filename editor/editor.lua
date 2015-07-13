@@ -43,27 +43,29 @@ function Editor:draw()
     self.cursor:draw(x, y)
 end
 
-function Editor:mousepressed(x, y)
+function Editor:mousepressed(x, y, button)
     -- print(self.cursor.description, math.ceil((x-300)/tilesize[1]*2), math.ceil((y)/tilesize[2]*2))
-    local x_map =  math.ceil((x-tilesize[1])/tilesize[1])*2
-    local y_map = math.ceil((y-tilesize[2]+5)/tilesize[2])*2
-    if self.cursor.index < 13 then
-        x_map = x_map + 1
-        y_map = y_map + 1
-    elseif self.cursor.index <=14 then
-        x_map =  math.ceil((x-tilesize[1]/2)/tilesize[1])*2
-        y_map = y_map + 1
-    else
-        y_map = math.ceil((y-tilesize[2]/2+5)/tilesize[2])*2
-        x_map = x_map + 1
-    end
-    if x_map >0 and x_map <= self.map.len and
-        y_map >0 and y_map <= self.map.len then
-        self.map:add_object(self.cursor.description, x_map, y_map)
-    else
-        local obj_type = self.panel:get_object(x, y)
-        self.cursor = Cursor:new(obj_type)
-    end
+    if button == 'l' then 
+	    local x_map =  math.ceil((x-tilesize[1])/tilesize[1])*2
+	    local y_map = math.ceil((y-tilesize[2]+5)/tilesize[2])*2
+	    if self.cursor.index < 13 then
+	        x_map = x_map + 1
+	        y_map = y_map + 1
+	    elseif self.cursor.index <=14 then
+	        x_map =  math.ceil((x-tilesize[1]/2)/tilesize[1])*2
+	        y_map = y_map + 1
+	    else
+	        y_map = math.ceil((y-tilesize[2]/2+5)/tilesize[2])*2
+	        x_map = x_map + 1
+	    end
+	    if x_map >0 and x_map <= self.map.len and
+	        y_map >0 and y_map <= self.map.len then
+	        self.map:add_object(self.cursor.description, x_map, y_map)
+	    else
+	        local obj_type = self.panel:get_object(x, y)
+	        self.cursor = Cursor:new(obj_type)
+	    end
+	end
 end
 
 function Editor:mousereleased(x,y)
@@ -89,7 +91,7 @@ function Editor:keypressed(key)
     	return
     elseif key == 'escape' then
         self:gotoState('Menu')
-        self:load_menu()
+        self:load_main_menu()
     else
     	return
     end

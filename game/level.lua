@@ -156,7 +156,7 @@ function Level:keypressed(key)
         val = {0, 1}
     elseif key == 'escape' then
         self:gotoState('Menu')
-        self:load_menu()
+        self:load_main_menu()
         return
     else
       return
@@ -166,6 +166,9 @@ function Level:keypressed(key)
         self.moved = false
         self:move(val)
     end
+end
+
+function Level:mousepressed(x, y, button)
 end
 
 function Level:mousereleased(x, y)

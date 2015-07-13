@@ -23,7 +23,7 @@ function love.load()
 
     game = Game:new()
     game:gotoState('Menu')
-    game:load_menu()
+    game:load_main_menu()
     -- game:load_level(1)
 end
 
@@ -43,9 +43,7 @@ function love.mousepressed(x, y, button)
     -- """
     -- Callback on mouse press
     -- """
-    if button == "l" then
-        game:mousepressed(x, y)
-    end
+    game:mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button)

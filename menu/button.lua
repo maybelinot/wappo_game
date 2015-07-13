@@ -3,8 +3,8 @@ local class = require 'libs/middleclass'
 
 local Button = class('Button')
 
-Button.static.sprite = love.graphics.newImage('sprites/button.png')
-function Button:initialize(positions, text, callback)
+function Button:initialize(positions, text, callback, sprite)
+	self.sprite = sprite
 	self.text = text
 	self.x = positions[1]
 	self.y = positions[2]
@@ -15,7 +15,7 @@ function Button:initialize(positions, text, callback)
 end
 
 function Button:draw(x,y)
-	love.graphics.draw(Button.sprite, x + self.x , y + self.y)
+	love.graphics.draw(self.sprite, x + self.x , y + self.y)
 	love.graphics.print(self.text, x + self.x, y + self.y)
 end
 
