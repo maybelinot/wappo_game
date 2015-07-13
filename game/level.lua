@@ -1,7 +1,7 @@
 -- local class = require 'libs/middleclass'
 -- require 'units'
 require 'animation'
--- Unit = require 'unit'
+Maps = require 'maps/maps'
 Enemies = require 'game/enemies'
 Player = require 'game/player'
 Floor = require 'game/floor'
@@ -14,11 +14,14 @@ function Level:load_level(number, level_relation)
 	-- """
 	-- Map and all required units loading
 	-- """
-    if level_relation == 'Campaign' then
+    self.level_relation = level_relation
+    if self.level_relation == 'Campaign' then
         self.level_map = require 'maps/original_levels'
+    elseif self.level_relation == 'Own level' then
+        print('ok')
+        maps = Maps()
+        self.level_map = maps:get_maps()
         print(#self.level_map)
-    elseif level_relation == 'Own level' then
-        self:load_maps()
     end
     if number <1 or number > #self.level_map then
         self.current_map = #self.level_map
@@ -122,22 +125,6 @@ function Level:is_on_map(x, y)
     return true
 end
 
-function Level:load_maps()
-    self.level_map = {}
-    local s = "\n"
-    for token in love.filesystem.read( "levels_new.lua" ):gmatch("(.-)"..s.."()") do
-        table.insert(self.level_map, self:read(token))
-    end
-end
-
-function Level:read(map)
-    local data = {}
-    for token in map:gmatch("%w+") do
-       table.insert(data, tonumber(token))
-    end
-    return data
-end
-
 function Level:keypressed(key)
     -- """
     -- Callback on key press
@@ -155,8 +142,13 @@ function Level:keypressed(key)
         key = 'right'
         val = {0, 1}
     elseif key == 'escape' then
-        self:gotoState('Menu')
-        self:load_main_menu()
+        if self.level_relation == 'Campaign' then
+            self:gotoState('Menu')
+            self:load_campaign_menu()
+        elseif self.level_relation == 'Own level' then
+            self:gotoState('Menu')
+            self:load_own_level_menu()
+        end
         return
     else
       return

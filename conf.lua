@@ -1,10 +1,10 @@
 function love.conf(t)
     t.identity = nil                   -- The name of the save directory (string)
     t.version = "0.9.2"                -- The LÖVE version this game was made for (string)
-    t.console = true                  -- Attach a console (boolean, Windows only)
+    t.console = false                  -- Attach a console (boolean, Windows only)
  
     t.window.title = "Untitled"        -- The window title (string)
-    t.window.icon = "Sprites/wicon.png"                -- Filepath to an image to use as the window's icon (string)
+    t.window.icon = "sprites/wicon.png"                -- Filepath to an image to use as the window's icon (string)
     t.window.width = 240               -- The window width (number)
     t.window.height = 424              -- The window height (number)
     t.window.borderless = false        -- Remove all border visuals from the window (boolean)

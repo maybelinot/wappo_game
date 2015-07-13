@@ -1,7 +1,7 @@
 local class = require 'libs/middleclass'
 
 local Panel = require 'menu/panel'
--- require 'units'
+local Maps = require 'maps/maps'
 -- require 'animation'
 -- Unit = require 'unit'
 -- Enemies = require 'game/enemies'
@@ -20,7 +20,7 @@ function Menu:load_main_menu()
     self.panel_positions = {20, 110, 200, 200}
     self.panel = Panel(self.panel_positions, 5, {40, 5, 120, 35}, button_sprite, false)
     self.panel:add_button('Campaign', function () self:load_campaign_menu() end)
-    self.panel:add_button('Own level', function () self:gotoState('Editor') self:load_editor() end)
+    self.panel:add_button('Own level', function () self:load_own_level_menu() end)
     self.panel:add_button('Exit', function () love.event.quit() end)
 end
 
@@ -34,6 +34,20 @@ function Menu:load_campaign_menu()
     for i=1, #require 'maps/original_levels' do
         self.panel:add_button('Level'..tostring(i), function () self:gotoState('Level') self:load_level(i, 'Campaign') end)
     end
+end
+
+function Menu:load_own_level_menu()
+    self.bcg = nil
+    self.frame = love.graphics.newImage('sprites/bgmenuCampaign.png')
+    self.ad = love.graphics.newImage('sprites/advert.png')
+    local button_sprite = love.graphics.newImage('sprites/buttonCampaign.png')
+    self.panel_positions = {20, 60, 200, 250}
+    self.panel = Panel(self.panel_positions,  1, {5, 5, 190, 20}, button_sprite, true)
+    local map = Maps()
+    for i=1, #map.maps do
+        self.panel:add_button(map.map_names[i], function () self:gotoState('Level') self:load_level(i, 'Own level') end)
+    end
+    self.panel:add_button('Create level', function () self:gotoState('Editor') self:load_editor() end)
 end
 
 function Menu:draw()

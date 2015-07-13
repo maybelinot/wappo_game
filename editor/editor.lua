@@ -79,9 +79,8 @@ function Editor:keypressed(key)
     if key=='return' then
     	if self.map:is_ok() then
 	    	self.map:save()
-	    	self.map:load_maps()
-	    	self:gotoState('Level') 
-	    	self:load_level(0, 'Own level')
+	    	self:gotoState('Menu') 
+	    	self:load_own_level_menu()
 	    else
 	    	print('You need player on you level')
 	    end
@@ -91,7 +90,7 @@ function Editor:keypressed(key)
     	return
     elseif key == 'escape' then
         self:gotoState('Menu')
-        self:load_main_menu()
+        self:load_own_level_menu()
     else
     	return
     end
