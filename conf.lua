@@ -4,7 +4,6 @@ function love.conf(t)
     t.console = false                  -- Attach a console (boolean, Windows only)
  
     t.window.title = "Untitled"        -- The window title (string)
-    t.window.icon = "sprites/wicon.png"                -- Filepath to an image to use as the window's icon (string)
     t.window.width = 240               -- The window width (number)
     t.window.height = 424              -- The window height (number)
     t.window.borderless = false        -- Remove all border visuals from the window (boolean)

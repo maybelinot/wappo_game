@@ -1,4 +1,4 @@
--- love.filesystem.setIdentity( "wappo_game")
+love.filesystem.setIdentity( "wappo_game")
 love.filesystem.mount(love.filesystem.getSourceBaseDirectory(), "")
 local class    = require 'libs/middleclass'
 local Stateful = require 'libs/stateful'
