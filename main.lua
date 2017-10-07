@@ -53,6 +53,10 @@ function love.mousereleased(x, y, button)
     end
 end
 
+function love.wheelmoved( dx, dy )
+    game:wheelmoved(dx, dy)
+end
+
 
 
 

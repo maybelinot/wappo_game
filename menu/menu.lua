@@ -73,15 +73,18 @@ function Menu:keypressed(key)
 end
 
 function Menu:mousepressed(x, y, button)
-    if button =='l' then
+    if button == 1 then
         self.panel:mousepressed(x, y)
-    elseif x >self.panel_positions[1] and x < self.panel_positions[3] and
-            y >self.panel_positions[2] and y < self.panel_positions[4] then
-        if button == "wu" then
-            self.panel:scroll_down()
-        elseif button == "wd" then
-            self.panel:scroll_up()
-        end
+    end
+end
+
+function Menu:wheelmoved(dx, dy)
+    -- if dx >self.panel_positions[1] and dx < self.panel_positions[3] and
+    --         dy >self.panel_positions[2] and dy < self.panel_positions[4] then
+    if dy > 0 then
+        self.panel:scroll_down()
+    elseif dy < 0 then
+        self.panel:scroll_up()
     end
 end
 
