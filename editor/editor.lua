@@ -45,7 +45,7 @@ end
 
 function Editor:mousepressed(x, y, button)
     -- print(self.cursor.description, math.ceil((x-300)/tilesize[1]*2), math.ceil((y)/tilesize[2]*2))
-    if button == 'l' then 
+    if button == 1 then 
 	    local x_map =  math.ceil((x-tilesize[1])/tilesize[1])*2
 	    local y_map = math.ceil((y-tilesize[2]+5)/tilesize[2])*2
 	    if self.cursor.index < 13 then
