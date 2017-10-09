@@ -1,18 +1,18 @@
 # Wappo Game
-It is a remastered copy of old Siemens game named Wappo. Game is created with LÖVE.
+This is a remastered copy of old Siemens game called Wappo. The game was created with LÖVE.
 
 ## Features
 * 100 levels
 * Level editor
-* Place for your ad.
+* Place for your ad
 
 ## Requirements
 * [LÖVE](https://love2d.org/)
 
-## Instalation
+## Installation
 * Download LÖVE from homepage or install it with help of your package manager
 * Clone this repository
 
-## Running game
+## Running the game
 * cd to game folder
 * execute `love .`
