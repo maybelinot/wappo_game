@@ -33,7 +33,7 @@ function Level:load_level(number, level_relation)
     self.size.y = 11
 
     self.ad = love.graphics.newImage('sprites/advert.png')
-        -- Tweeking preferences
+    -- Tweeking preferences
     self.tweeking_time = 0.5
     -- self.tweeking_ease = "circinout"
     self.tweeking_ease = "linear"
@@ -41,7 +41,8 @@ function Level:load_level(number, level_relation)
 end
 
 function Level:draw()
-    love.graphics.draw(self.ad, 0, 320)
+    -- love.graphics.draw(self.ad, 0, 320)
+    love.graphics.print( 'Level #' .. tostring(self.current_map), 50, 350, 0,2.5 )
     love.graphics.draw(background, 0, 0)
     self.floor:draw()
     self.movable:draw()
