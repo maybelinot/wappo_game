@@ -95,6 +95,3 @@ function Editor:keypressed(key)
     	return
     end
 end
-
-
--- return Editor
