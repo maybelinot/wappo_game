@@ -55,6 +55,7 @@ function Menu:draw()
     if self.frame then
         love.graphics.draw(self.frame, 0, 0)
     end
+    love.graphics.rectangle("fill", 0, 320, 240, 120 )
 end
 
 function Menu:update(dt)
@@ -87,4 +88,3 @@ end
 function Menu:mousereleased(x, y)
 
 end
--- return Menu
