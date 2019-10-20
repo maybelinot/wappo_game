@@ -15,7 +15,6 @@ local Menu = Game:addState('Menu')
 function Menu:load_main_menu()
     self.bcg = love.graphics.newImage('sprites/bgmenu.png')
     self.frame = nil
-    self.ad = love.graphics.newImage('sprites/advert.png')
     local button_sprite = love.graphics.newImage('sprites/button.png')
     self.panel_positions = {20, 110, 200, 200}
     self.panel = Panel(self.panel_positions, 5, {40, 5, 120, 35}, button_sprite, false)
@@ -27,7 +26,6 @@ end
 function Menu:load_campaign_menu()
     self.bcg = nil
     self.frame = love.graphics.newImage('sprites/bgmenuCampaign.png')
-    self.ad = love.graphics.newImage('sprites/advert.png')
     local button_sprite = love.graphics.newImage('sprites/buttonCampaign.png')
     self.panel_positions = {20, 60, 200, 250}
     self.panel = Panel(self.panel_positions,  1, {5, 5, 190, 20}, button_sprite, true)
@@ -39,7 +37,6 @@ end
 function Menu:load_own_level_menu()
     self.bcg = nil
     self.frame = love.graphics.newImage('sprites/bgmenuCampaign.png')
-    self.ad = love.graphics.newImage('sprites/advert.png')
     local button_sprite = love.graphics.newImage('sprites/buttonCampaign.png')
     self.panel_positions = {20, 60, 200, 250}
     self.panel = Panel(self.panel_positions,  1, {5, 5, 190, 20}, button_sprite, true)
@@ -58,7 +55,6 @@ function Menu:draw()
     if self.frame then
         love.graphics.draw(self.frame, 0, 0)
     end
-    love.graphics.draw(self.ad, 0, 320)
 end
 
 function Menu:update(dt)
