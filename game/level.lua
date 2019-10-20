@@ -96,7 +96,6 @@ function Level:restart()
   -- """
   -- Start new level
   -- """
-  -- level = Level(32)
     self:load()
 end
 
