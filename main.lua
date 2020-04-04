@@ -6,10 +6,6 @@ local Stateful = require 'libs/stateful'
 Game = class('Game')
 Game:include(Stateful)
 
-function Game:initialize()
-
-end
-
 require 'game/level'
 require 'editor/editor'
 require 'menu/menu'
