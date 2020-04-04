@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: leafo/gh-actions-lua@v5
+    - uses: leafo/gh-actions-luarocks@v2
+    - name: Install luacheck
+      run: luarocks install luacheck
+    - name: Run linter
+      run: |
+        cd $GITHUB_WORKSPACE
+        luacheck *.lua editor/* game/* maps/* menu/*
